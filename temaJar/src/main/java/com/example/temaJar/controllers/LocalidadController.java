@@ -1,9 +1,9 @@
 package com.example.temaJar.controllers;
 
-import com.example.temaJar.models.Localidad;
+import com.example.temaJar.dtos.LocalidadDTO;
+import com.example.temaJar.servicios.LocalidadServicio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import com.example.temaJar.servicios.LocalidadServicio;
 
 import java.util.List;
 
@@ -14,31 +14,26 @@ public class LocalidadController {
     @Autowired
     private LocalidadServicio localidadServicio;
 
-    // GET para obtener todas las localidad
     @GetMapping
-    public List<Localidad> getAll() {
+    public List<LocalidadDTO> getAll() {
         return localidadServicio.obtenerTodo();
     }
 
-    // GET para obtener una provincia por ID
     @GetMapping("/{id}")
-    public Localidad getById(@PathVariable Long id) {
+    public LocalidadDTO getById(@PathVariable Long id) {
         return localidadServicio.obtenerPorId(id);
     }
 
-    // POST para crear una nueva localidad
     @PostMapping("/registro")
-    public Localidad create(@RequestBody Localidad localidad) {
-        return localidadServicio.crear(localidad);
+    public LocalidadDTO create(@RequestBody LocalidadDTO localidadDTO) {
+        return localidadServicio.crear(localidadDTO);
     }
 
-    // PUT para actualizar una provincia existente
     @PutMapping("/{id}")
-    public Localidad update(@PathVariable Long id, @RequestBody Localidad localidadActualizada) throws Exception{
-        return localidadServicio.modificar(id, localidadActualizada) ;
+    public LocalidadDTO update(@PathVariable Long id, @RequestBody LocalidadDTO localidadDTO) throws Exception {
+        return localidadServicio.modificar(id, localidadDTO);
     }
 
-    // DELETE para eliminar una provincia por ID
     @DeleteMapping("/{id}")
     public String delete(@PathVariable Long id) {
         if (localidadServicio.eliminar(id)) {
@@ -47,5 +42,4 @@ public class LocalidadController {
             return "Localidad con ID " + id + " no encontrada.";
         }
     }
-
 }

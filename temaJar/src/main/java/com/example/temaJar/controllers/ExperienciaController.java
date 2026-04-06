@@ -1,5 +1,6 @@
 package com.example.temaJar.controllers;
 
+import com.example.temaJar.dtos.ExperienciaDTO;
 import com.example.temaJar.models.Experiencia;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -25,12 +26,12 @@ public class ExperienciaController {
     }
 
     @PostMapping("/registro")
-    public Experiencia create(@RequestBody Experiencia experiencia){
+    public Experiencia create(@RequestBody ExperienciaDTO experiencia){
         return experienciaServicio.crear(experiencia);
     }
 
     @PutMapping("/{id}")
-    public Experiencia update(@PathVariable Long id, @RequestBody Experiencia experiencia) throws Exception{
+    public Experiencia update(@PathVariable Long id, @RequestBody ExperienciaDTO experiencia) throws Exception{
         experiencia.setId(id);
         return experienciaServicio.modificar(id, experiencia);
     }

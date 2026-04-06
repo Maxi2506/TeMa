@@ -1,6 +1,9 @@
 package com.example.temaJar.servicios;
 
+import com.example.temaJar.dtos.EducacionDTO;
+import com.example.temaJar.models.Cv_Base;
 import com.example.temaJar.models.Educacion;
+import com.example.temaJar.repository.Cv_BaseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -15,6 +18,9 @@ public class EducacionServicio {
     @Autowired
     private EducacionRepository educacionRepository;
 
+    @Autowired
+    private Cv_BaseRepository cvBaseRepository;
+
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
     public List<Educacion> obtenerTodo(){
         return educacionRepository.findAll();
@@ -26,7 +32,15 @@ public class EducacionServicio {
     }
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
-    public Educacion crear(Educacion educacion){
+    public Educacion crear(EducacionDTO dto){
+        Educacion educacion = new Educacion();
+        educacion.setDuracion(dto.getDuracion());
+        educacion.setTitulo(dto.getTitulo());
+        educacion.setInstitucion(dto.getInstitucion());
+
+        Cv_Base cv = cvBaseRepository.findById(dto.getIdCvBase()).orElse(null);
+        educacion.setId_cv(cv);
+
         return educacionRepository.save(educacion);
     }
 
@@ -40,12 +54,16 @@ public class EducacionServicio {
     }
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
-    public Educacion modificar(Long id, Educacion educacionActualizado) throws Exception {
-        return educacionRepository.findById(id).map(oficio -> {
-            oficio.setInstitucion(educacionActualizado.getInstitucion());
-            oficio.setTitulo(educacionActualizado.getTitulo());
-            oficio.setDuracion(educacionActualizado.getDuracion());
-            return educacionRepository.save(oficio);
+    public Educacion modificar(Long id, EducacionDTO dto) throws Exception {
+        return educacionRepository.findById(id).map(educacion -> {
+            educacion.setInstitucion(dto.getInstitucion());
+            educacion.setTitulo(dto.getTitulo());
+            educacion.setDuracion(dto.getDuracion());
+
+            Cv_Base cv = cvBaseRepository.findById(dto.getIdCvBase()).orElse(null);
+            educacion.setId_cv(cv);
+
+            return educacionRepository.save(educacion);
         }).orElse(null);
     }
 

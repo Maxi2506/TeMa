@@ -1,13 +1,15 @@
 package com.example.temaJar.servicios;
 
+import com.example.temaJar.dtos.PaisDTO;
 import com.example.temaJar.models.Pais;
+import com.example.temaJar.repository.PaisRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import com.example.temaJar.repository.PaisRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PaisServicio {
@@ -15,36 +17,56 @@ public class PaisServicio {
     @Autowired
     private PaisRepository paisRepository;
 
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
-    public List<Pais> obtenerTodo(){
-        return paisRepository.findAll();
+    @Transactional(readOnly = true)
+    public List<PaisDTO> obtenerTodo() {
+        return paisRepository.findAll().stream()
+                .map(this::convertirADTO)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public PaisDTO obtenerPorId(Long id) {
+        return paisRepository.findById(id)
+                .map(this::convertirADTO)
+                .orElse(null);
     }
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
-    public Pais obtenerPorId(Long id){
-        return paisRepository.findById(id).orElse(null);
+    public PaisDTO crear(PaisDTO dto) {
+        if (paisRepository.findByNombre(dto.getNombre()).isPresent()) {
+            throw new RuntimeException("El país '" + dto.getNombre() + "' ya existe en el sistema.");
+        }
+
+        Pais pais = new Pais();
+        pais.setNombre(dto.getNombre());
+
+        Pais guardado = paisRepository.save(pais);
+        return convertirADTO(guardado);
     }
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
-    public Pais crear(Pais pais){
-        return paisRepository.save(pais);
+    public PaisDTO modificar(Long id, PaisDTO dto) {
+        return paisRepository.findById(id).map(pais -> {
+            pais.setNombre(dto.getNombre());
+            Pais actualizado = paisRepository.save(pais);
+            return convertirADTO(actualizado);
+        }).orElse(null);
     }
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
-    public boolean eliminar(Long id){
-        if (paisRepository.existsById(id)){
+    public boolean eliminar(Long id) {
+        if (paisRepository.existsById(id)) {
             paisRepository.deleteById(id);
             return true;
         }
         return false;
     }
 
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
-    public Pais modificar(Long id, Pais paisActualizado) throws Exception {
-        return paisRepository.findById(id).map(oficio -> {
-            oficio.setNombre(paisActualizado.getNombre());
-            return paisRepository.save(oficio);
-        }).orElse(null);
+    // Mapper consistente con el resto del proyecto
+    private PaisDTO convertirADTO(Pais pais) {
+        PaisDTO dto = new PaisDTO();
+        dto.setId(pais.getId());
+        dto.setNombre(pais.getNombre());
+        return dto;
     }
-
 }

@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UsuarioServicio implements UserDetailsService {
@@ -37,7 +38,6 @@ public class UsuarioServicio implements UserDetailsService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    // 1. MODO SEGURIDAD: Carga de usuario para el Login
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String correo) throws UsernameNotFoundException {
@@ -50,54 +50,54 @@ public class UsuarioServicio implements UserDetailsService {
         return new User(usuario.getCorreo(), usuario.getClave(), permisos);
     }
 
-    // 2. MÉTODOS CRUD
-
     @Transactional(readOnly = true)
-    public List<Usuario> obtenerTodo() {
-        return usuarioRepository.findAll();
+    public List<UsuarioDTO> obtenerTodo() {
+        return usuarioRepository.findAll().stream()
+                .map(this::convertirADTO)
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public Usuario obtenerPorId(Long id) {
-        return usuarioRepository.findById(id).orElse(null);
+    public UsuarioDTO obtenerPorId(Long id) {
+        return usuarioRepository.findById(id)
+                .map(this::convertirADTO)
+                .orElse(null);
     }
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
-    public Usuario crearDesdeDTO(UsuarioDTO dto) {
+    public UsuarioDTO crear(UsuarioDTO dto) {
         Usuario usuario = new Usuario();
 
-        // Mapeo de datos simples desde el DTO
+        // Mapeo básico
         usuario.setNombre(dto.getNombre());
         usuario.setApellido(dto.getApellido());
         usuario.setEdad(dto.getEdad());
         usuario.setCorreo(dto.getCorreo());
         usuario.setTelefono(dto.getTelefono());
         usuario.setDomicilio(dto.getDomicilio());
-
-        // Conversión segura de String a Enum
         usuario.setRol(Rol.valueOf(dto.getRol().toUpperCase()));
 
-        // Búsqueda de objetos relacionados por Nombre
         usuario.setLocalidad(localidadRepository.findByNombre(dto.getLocalidad())
-                .orElseThrow(() -> new RuntimeException("Localidad no encontrada: " + dto.getLocalidad())));
+                .orElseThrow(() -> new RuntimeException("Error: La localidad '" + dto.getLocalidad() + "' no existe en la base de datos.")));
 
         usuario.setProvincia(provinciaRepository.findByNombre(dto.getProvincia())
-                .orElseThrow(() -> new RuntimeException("Provincia no encontrada: " + dto.getProvincia())));
+                .orElseThrow(() -> new RuntimeException("Error: La provincia '" + dto.getProvincia() + "' no existe.")));
 
         usuario.setPais(paisRepository.findByNombre(dto.getPais())
-                .orElseThrow(() -> new RuntimeException("País no encontrado: " + dto.getPais())));
+                .orElseThrow(() -> new RuntimeException("Error: El país '" + dto.getPais() + "' no existe.")));
 
-        // ENCRIPTACIÓN: Usamos el campo 'clave' que viene del DTO
+        // Encriptación de seguridad
         if (dto.getClave() == null || dto.getClave().isEmpty()) {
-            throw new RuntimeException("La clave no puede estar vacía");
+            throw new RuntimeException("La clave es obligatoria para el registro.");
         }
         usuario.setClave(passwordEncoder.encode(dto.getClave()));
 
-        return usuarioRepository.save(usuario);
+        Usuario guardado = usuarioRepository.save(usuario);
+        return convertirADTO(guardado);
     }
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
-    public Usuario actualizarDesdeDTO(Long id, UsuarioDTO dto) {
+    public UsuarioDTO modificar(Long id, UsuarioDTO dto) {
         return usuarioRepository.findById(id).map(usuario -> {
             usuario.setNombre(dto.getNombre());
             usuario.setApellido(dto.getApellido());
@@ -107,20 +107,26 @@ public class UsuarioServicio implements UserDetailsService {
             usuario.setDomicilio(dto.getDomicilio());
             usuario.setRol(Rol.valueOf(dto.getRol().toUpperCase()));
 
-            // Solo actualiza la clave si se envía una nueva en el DTO
             if (dto.getClave() != null && !dto.getClave().isEmpty()) {
                 usuario.setClave(passwordEncoder.encode(dto.getClave()));
             }
 
-            // Actualización de relaciones (si no se encuentra el nombre, mantiene la actual)
-            usuario.setLocalidad(localidadRepository.findByNombre(dto.getLocalidad())
-                    .orElse(usuario.getLocalidad()));
-            usuario.setProvincia(provinciaRepository.findByNombre(dto.getProvincia())
-                    .orElse(usuario.getProvincia()));
-            usuario.setPais(paisRepository.findByNombre(dto.getPais())
-                    .orElse(usuario.getPais()));
+            // Actualización de relaciones por nombre
+            if (dto.getLocalidad() != null) {
+                usuario.setLocalidad(localidadRepository.findByNombre(dto.getLocalidad())
+                        .orElse(usuario.getLocalidad()));
+            }
+            if (dto.getProvincia() != null) {
+                usuario.setProvincia(provinciaRepository.findByNombre(dto.getProvincia())
+                        .orElse(usuario.getProvincia()));
+            }
+            if (dto.getPais() != null) {
+                usuario.setPais(paisRepository.findByNombre(dto.getPais())
+                        .orElse(usuario.getPais()));
+            }
 
-            return usuarioRepository.save(usuario);
+            Usuario actualizado = usuarioRepository.save(usuario);
+            return convertirADTO(actualizado);
         }).orElse(null);
     }
 
@@ -131,5 +137,25 @@ public class UsuarioServicio implements UserDetailsService {
             return true;
         }
         return false;
+    }
+
+    // Mapper privado para mantener la seguridad y el desacoplamiento
+    private UsuarioDTO convertirADTO(Usuario usuario) {
+        UsuarioDTO dto = new UsuarioDTO();
+        dto.setId(usuario.getId());
+        dto.setNombre(usuario.getNombre());
+        dto.setApellido(usuario.getApellido());
+        dto.setCorreo(usuario.getCorreo());
+        dto.setEdad(usuario.getEdad());
+        dto.setTelefono(usuario.getTelefono());
+        dto.setDomicilio(usuario.getDomicilio());
+        dto.setRol(usuario.getRol().toString());
+
+        // Devolvemos nombres en lugar de IDs para que el front-end los muestre fácil
+        if (usuario.getLocalidad() != null) dto.setLocalidad(usuario.getLocalidad().getNombre());
+        if (usuario.getProvincia() != null) dto.setProvincia(usuario.getProvincia().getNombre());
+        if (usuario.getPais() != null) dto.setPais(usuario.getPais().getNombre());
+
+        return dto;
     }
 }

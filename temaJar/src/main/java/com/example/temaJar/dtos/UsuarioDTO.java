@@ -1,6 +1,8 @@
 package com.example.temaJar.dtos;
 
 public class UsuarioDTO {
+
+    private Long id;
     private String nombre;
     private String apellido;
     private int edad;
@@ -16,8 +18,8 @@ public class UsuarioDTO {
     public UsuarioDTO() {
     }
 
-    // Constructor completo
-    public UsuarioDTO(String nombre, String apellido, int edad, String correo, String clave, Long telefono, String domicilio, String rol, String localidad, String provincia, String pais) {
+    public UsuarioDTO(Long id, String nombre, String apellido, int edad, String correo, String clave, Long telefono, String domicilio, String rol, String localidad, String provincia, String pais) {
+        this.id = id;
         this.nombre = nombre;
         this.apellido = apellido;
         this.edad = edad;
@@ -31,38 +33,99 @@ public class UsuarioDTO {
         this.pais = pais;
     }
 
-    // Getters y Setters corregidos
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getApellido() { return apellido; }
-    public void setApellido(String apellido) { this.apellido = apellido; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public int getEdad() { return edad; }
-    public void setEdad(int edad) { this.edad = edad; }
+    public String getNombre() {
+        return nombre;
+    }
 
-    public String getCorreo() { return correo; }
-    public void setCorreo(String correo) { this.correo = correo; }
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 
-    public String getClave() { return clave; }
-    public void setClave(String clave) { this.clave = clave; }
+    public String getApellido() {
+        return apellido;
+    }
 
-    public Long getTelefono() { return telefono; }
-    public void setTelefono(Long telefono) { this.telefono = telefono; }
+    public void setApellido(String apellido) {
+        this.apellido = apellido;
+    }
 
-    public String getDomicilio() { return domicilio; }
-    public void setDomicilio(String domicilio) { this.domicilio = domicilio; }
+    public int getEdad() {
+        return edad;
+    }
 
-    public String getRol() { return rol; }
-    public void setRol(String rol) { this.rol = rol; }
+    public void setEdad(int edad) {
+        this.edad = edad;
+    }
 
-    public String getLocalidad() { return localidad; }
-    public void setLocalidad(String localidad) { this.localidad = localidad; }
+    public String getCorreo() {
+        return correo;
+    }
 
-    public String getProvincia() { return provincia; }
-    // CORRECCIÓN AQUÍ: nombre del parámetro en minúscula y asignación correcta
-    public void setProvincia(String provincia) { this.provincia = provincia; }
+    public void setCorreo(String correo) {
+        this.correo = correo;
+    }
 
-    public String getPais() { return pais; }
-    public void setPais(String pais) { this.pais = pais; }
+    public String getClave() {
+        return clave;
+    }
+
+    public void setClave(String clave) {
+        this.clave = clave;
+    }
+
+    public Long getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(Long telefono) {
+        this.telefono = telefono;
+    }
+
+    public String getDomicilio() {
+        return domicilio;
+    }
+
+    public void setDomicilio(String domicilio) {
+        this.domicilio = domicilio;
+    }
+
+    public String getRol() {
+        return rol;
+    }
+
+    public void setRol(String rol) {
+        this.rol = rol;
+    }
+
+    public String getLocalidad() {
+        return localidad;
+    }
+
+    public void setLocalidad(String localidad) {
+        this.localidad = localidad;
+    }
+
+    public String getProvincia() {
+        return provincia;
+    }
+
+    public void setProvincia(String provincia) {
+        this.provincia = provincia;
+    }
+
+    public String getPais() {
+        return pais;
+    }
+
+    public void setPais(String pais) {
+        this.pais = pais;
+    }
 }

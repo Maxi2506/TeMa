@@ -2,14 +2,12 @@ package com.example.temaJar.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name="provincia")
 public class Provincia {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id")
@@ -18,6 +16,11 @@ public class Provincia {
     @Column(name="nombre")
     private String nombre;
 
+    // --- NUEVA RELACIÓN: Una provincia pertenece a UN país ---
+    @ManyToOne
+    @JoinColumn(name = "id_pais")
+    private Pais pais;
+
     @OneToMany(mappedBy = "provincia")
     @JsonIgnore
     private List<Usuario> clientes = new ArrayList<>();
@@ -25,9 +28,11 @@ public class Provincia {
     public Provincia() {
     }
 
-    public Provincia(Long id, String nombre, List<Usuario> clientes) {
+    // Constructor actualizado
+    public Provincia(Long id, String nombre, Pais pais, List<Usuario> clientes) {
         this.id = id;
         this.nombre = nombre;
+        this.pais = pais;
         this.clientes = clientes;
     }
 
@@ -47,6 +52,15 @@ public class Provincia {
         this.nombre = nombre;
     }
 
+    // Getter y Setter para la nueva relación
+    public Pais getPais() {
+        return pais;
+    }
+
+    public void setPais(Pais pais) {
+        this.pais = pais;
+    }
+
     public List<Usuario> getClientes() {
         return clientes;
     }
@@ -60,7 +74,7 @@ public class Provincia {
         return "Provincia{" +
                 "id=" + id +
                 ", nombre='" + nombre + '\'' +
-                ", clientes=" + clientes +
+                ", pais=" + (pais != null ? pais.getNombre() : "null") +
                 '}';
     }
 }

@@ -1,6 +1,10 @@
 package com.example.temaJar.servicios;
 
+import com.example.temaJar.dtos.HabilidadesDTO;
+import com.example.temaJar.enumeracion.Categoria;
+import com.example.temaJar.enumeracion.NivelDeExperiencia;
 import com.example.temaJar.models.Habilidades;
+import com.example.temaJar.models.Puesto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -15,6 +19,11 @@ public class HabilidadesServicio {
     @Autowired
     private HabilidadesRepository habilidadesRepository;
 
+    @Transactional(readOnly = true)
+    public Habilidades obtenerPorNombre(String nombre) {
+        return habilidadesRepository.findByNombre(nombre).orElse(null);
+    }
+
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
     public List<Habilidades> obtenerTodo(){
         return habilidadesRepository.findAll();
@@ -26,7 +35,9 @@ public class HabilidadesServicio {
     }
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
-    public Habilidades crear(Habilidades habilidades){
+    public Habilidades crear(HabilidadesDTO dto) {
+        Habilidades habilidades = new Habilidades();
+        habilidades.setNombre(dto.getNombre());
         return habilidadesRepository.save(habilidades);
     }
 
@@ -40,10 +51,11 @@ public class HabilidadesServicio {
     }
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
-    public Habilidades modificar(Long id, Habilidades habilidadesActualizado) throws Exception {
-        return habilidadesRepository.findById(id).map(oficio -> {
-            oficio.setNombre(habilidadesActualizado.getNombre());
-            return habilidadesRepository.save(oficio);
+    public Habilidades modificar(Long id, HabilidadesDTO dto) {
+        return habilidadesRepository.findById(id).map(habilidad -> {
+            // Usamos el DTO para actualizar
+            habilidad.setNombre(dto.getNombre().trim());
+            return habilidadesRepository.save(habilidad);
         }).orElse(null);
     }
 

@@ -1,9 +1,9 @@
 package com.example.temaJar.controllers;
 
-import com.example.temaJar.models.Provincia;
+import com.example.temaJar.dtos.ProvinciaDTO;
+import com.example.temaJar.servicios.ProvinciaServicio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import com.example.temaJar.servicios.ProvinciaServicio;
 
 import java.util.List;
 
@@ -14,31 +14,26 @@ public class ProvinciaController {
     @Autowired
     private ProvinciaServicio provinciaServicio;
 
-    // GET para obtener todas las provincias
     @GetMapping
-    public List<Provincia> getAll() {
+    public List<ProvinciaDTO> getAll() {
         return provinciaServicio.obtenerTodo();
     }
 
-    // GET para obtener una provincia por ID
     @GetMapping("/{id}")
-    public Provincia getById(@PathVariable Long id) {
+    public ProvinciaDTO getById(@PathVariable Long id) {
         return provinciaServicio.obtenerPorId(id);
     }
 
-    // POST para crear una nueva provincia
     @PostMapping("/registro")
-    public Provincia create(@RequestBody Provincia provincia) {
-        return provinciaServicio.crear(provincia);
+    public ProvinciaDTO create(@RequestBody ProvinciaDTO provinciaDTO) {
+        return provinciaServicio.crear(provinciaDTO);
     }
 
-    // PUT para actualizar una provincia existente
     @PutMapping("/{id}")
-    public Provincia update(@PathVariable Long id, @RequestBody Provincia provinciaActualizada) throws Exception{
-        return provinciaServicio.modificar(id, provinciaActualizada) ;
+    public ProvinciaDTO update(@PathVariable Long id, @RequestBody ProvinciaDTO provinciaDTO) throws Exception {
+        return provinciaServicio.modificar(id, provinciaDTO);
     }
 
-    // DELETE para eliminar una provincia por ID
     @DeleteMapping("/{id}")
     public String delete(@PathVariable Long id) {
         if (provinciaServicio.eliminar(id)) {
@@ -47,5 +42,4 @@ public class ProvinciaController {
             return "Provincia con ID " + id + " no encontrada.";
         }
     }
-
 }

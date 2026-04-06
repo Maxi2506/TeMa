@@ -32,7 +32,6 @@ public class PuestoController {
 
     @PostMapping("/registro")
     public Puesto create(@RequestBody PuestoDTO puestoDTO) {
-        // Recibimos el DTO y delegamos al servicio la creación
         return puestoServicio.crear(puestoDTO);
     }
 
@@ -50,8 +49,4 @@ public class PuestoController {
         }
     }
 
-    @GetMapping("/count")
-    public long count() {
-        return puestoServicio.contar();
-    }
 }
