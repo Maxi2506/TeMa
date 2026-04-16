@@ -1,93 +1,93 @@
 package com.example.temaJar.models;
 
-/*import com.sun.source.doctree.RawTextTree;
-import com.sun.source.doctree.DocTree;
-import com.sun.source.doctree.DocTreeVisitor;*/
 import jakarta.persistence.*;
-
 import java.time.LocalDate;
 
 @Entity
-@Table(name="cv_Archivo")
+@Table(name="cv_archivo")
+// Quitamos @Data, @NoArgsConstructor y @AllArgsConstructor porque están fallando en la compilación
 public class Cv_Archivo {
 
-    @jakarta.persistence.Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id")
-    private Long Id;
+    private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "id_nombre_usuario")
-    private Usuario nombre_usuario;
+    @JoinColumn(name = "id_usuario", nullable = false)
+    private Usuario usuario;
 
     @Column(name="nombre_archivo")
-    private String nombre_archivo;
+    private String nombreArchivo;
 
     @Column(name="fecha_carga")
-    private LocalDate fecha_carga;
+    private LocalDate fechaCarga;
 
-    @Column(name="texto_extraido")
-    private String texto_extraido; //revisar uso y extacción de texto con ia
+    @Lob
+    @Column(name="texto_extraido", columnDefinition = "LONGTEXT")
+    private String textoExtraido;
 
+    // --- CONSTRUCTORES MANUALES ---
     public Cv_Archivo() {
     }
 
-    public Cv_Archivo(Long id, Usuario nombre_usuario, String nombre_archivo, LocalDate fecha_carga, String texto_extraido) {
-        Id = id;
-        this.nombre_usuario = nombre_usuario;
-        this.nombre_archivo = nombre_archivo;
-        this.fecha_carga = fecha_carga;
-        this.texto_extraido = texto_extraido;
+    public Cv_Archivo(Long id, Usuario usuario, String nombreArchivo, LocalDate fechaCarga, String textoExtraido) {
+        this.id = id;
+        this.usuario = usuario;
+        this.nombreArchivo = nombreArchivo;
+        this.fechaCarga = fechaCarga;
+        this.textoExtraido = textoExtraido;
     }
 
+    // --- GETTERS Y SETTERS MANUALES (Esto arregla los 10 errores) ---
     public Long getId() {
-        return Id;
+        return id;
     }
 
     public void setId(Long id) {
-        Id = id;
+        this.id = id;
     }
 
-    public Usuario getNombre_usuario() {
-        return nombre_usuario;
+    public Usuario getUsuario() {
+        return usuario;
     }
 
-    public void setNombre_usuario(Usuario nombre_usuario) {
-        this.nombre_usuario = nombre_usuario;
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 
-    public String getNombre_archivo() {
-        return nombre_archivo;
+    public String getNombreArchivo() {
+        return nombreArchivo;
     }
 
-    public void setNombre_archivo(String nombre_archivo) {
-        this.nombre_archivo = nombre_archivo;
+    public void setNombreArchivo(String nombreArchivo) {
+        this.nombreArchivo = nombreArchivo;
     }
 
-    public LocalDate getFecha_carga() {
-        return fecha_carga;
+    public LocalDate getFechaCarga() {
+        return fechaCarga;
     }
 
-    public void setFecha_carga(LocalDate fecha_carga) {
-        this.fecha_carga = fecha_carga;
+    public void setFechaCarga(LocalDate fechaCarga) {
+        this.fechaCarga = fechaCarga;
     }
 
-    public String getTexto_extraido() {
-        return texto_extraido;
+    public String getTextoExtraido() {
+        return textoExtraido;
     }
 
-    public void setTexto_extraido(String texto_extraido) {
-        this.texto_extraido = texto_extraido;
+    public void setTextoExtraido(String textoExtraido) {
+        this.textoExtraido = textoExtraido;
     }
 
     @Override
     public String toString() {
         return "Cv_Archivo{" +
-                "Id=" + Id +
-                ", nombre_usuario=" + nombre_usuario +
-                ", nombre_archivo='" + nombre_archivo + '\'' +
-                ", fecha_carga=" + fecha_carga +
-                ", texto_extraido=" + texto_extraido +
+                "id=" + id +
+                ", usuario=" + (usuario != null ? usuario.getNombre() : "null") +
+                ", nombreArchivo='" + nombreArchivo + '\'' +
+                ", fechaCarga=" + fechaCarga +
+                ", textoExtraidoChars=" + (textoExtraido != null ? textoExtraido.length() : 0) +
                 '}';
     }
 }

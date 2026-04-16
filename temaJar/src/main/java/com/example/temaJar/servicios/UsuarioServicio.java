@@ -23,26 +23,17 @@ import java.util.stream.Collectors;
 @Service
 public class UsuarioServicio implements UserDetailsService {
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
-
-    @Autowired
-    private LocalidadRepository localidadRepository;
-
-    @Autowired
-    private ProvinciaRepository provinciaRepository;
-
-    @Autowired
-    private PaisRepository paisRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    @Autowired private UsuarioRepository usuarioRepository;
+    @Autowired private LocalidadRepository localidadRepository;
+    @Autowired private ProvinciaRepository provinciaRepository;
+    @Autowired private PaisRepository paisRepository;
+    @Autowired private PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String correo) throws UsernameNotFoundException {
         Usuario usuario = usuarioRepository.findByCorreo(correo)
-                .orElseThrow(() -> new UsernameNotFoundException("No se encontró el usuario con el correo: " + correo));
+                .orElseThrow(() -> new UsernameNotFoundException("No se encontró el usuario: " + correo));
 
         List<GrantedAuthority> permisos = new ArrayList<>();
         permisos.add(new SimpleGrantedAuthority("ROLE_" + usuario.getRol().toString()));
@@ -67,30 +58,29 @@ public class UsuarioServicio implements UserDetailsService {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
     public UsuarioDTO crear(UsuarioDTO dto) {
         Usuario usuario = new Usuario();
-
-        // Mapeo básico
         usuario.setNombre(dto.getNombre());
         usuario.setApellido(dto.getApellido());
         usuario.setEdad(dto.getEdad());
         usuario.setCorreo(dto.getCorreo());
         usuario.setTelefono(dto.getTelefono());
         usuario.setDomicilio(dto.getDomicilio());
-        usuario.setRol(Rol.valueOf(dto.getRol().toUpperCase()));
-
-        usuario.setLocalidad(localidadRepository.findByNombre(dto.getLocalidad())
-                .orElseThrow(() -> new RuntimeException("Error: La localidad '" + dto.getLocalidad() + "' no existe en la base de datos.")));
-
-        usuario.setProvincia(provinciaRepository.findByNombre(dto.getProvincia())
-                .orElseThrow(() -> new RuntimeException("Error: La provincia '" + dto.getProvincia() + "' no existe.")));
-
-        usuario.setPais(paisRepository.findByNombre(dto.getPais())
-                .orElseThrow(() -> new RuntimeException("Error: El país '" + dto.getPais() + "' no existe.")));
-
-        // Encriptación de seguridad
-        if (dto.getClave() == null || dto.getClave().isEmpty()) {
-            throw new RuntimeException("La clave es obligatoria para el registro.");
-        }
         usuario.setClave(passwordEncoder.encode(dto.getClave()));
+        usuario.setRol(Rol.USUARIO);
+
+        // 1. Buscamos los objetos geográficos
+        Pais p = paisRepository.findByNombre(dto.getPais())
+                .orElseThrow(() -> new RuntimeException("País no encontrado: " + dto.getPais()));
+
+        Provincia prov = provinciaRepository.findByNombre(dto.getProvincia())
+                .orElseThrow(() -> new RuntimeException("Provincia no encontrada: " + dto.getProvincia()));
+
+        Localidad loc = localidadRepository.findByNombre(dto.getLocalidad())
+                .orElseThrow(() -> new RuntimeException("Localidad no encontrada: " + dto.getLocalidad()));
+
+        // 2. ASIGNACIÓN EXPLÍCITA (Crucial para que no vuelvan null)
+        usuario.setPais(p);
+        usuario.setProvincia(prov);
+        usuario.setLocalidad(loc);
 
         Usuario guardado = usuarioRepository.save(usuario);
         return convertirADTO(guardado);
@@ -105,29 +95,32 @@ public class UsuarioServicio implements UserDetailsService {
             usuario.setEdad(dto.getEdad());
             usuario.setTelefono(dto.getTelefono());
             usuario.setDomicilio(dto.getDomicilio());
-            usuario.setRol(Rol.valueOf(dto.getRol().toUpperCase()));
+
+            if (dto.getRol() != null) {
+                usuario.setRol(Rol.valueOf(dto.getRol().toUpperCase()));
+            }
 
             if (dto.getClave() != null && !dto.getClave().isEmpty()) {
                 usuario.setClave(passwordEncoder.encode(dto.getClave()));
             }
 
-            // Actualización de relaciones por nombre
-            if (dto.getLocalidad() != null) {
-                usuario.setLocalidad(localidadRepository.findByNombre(dto.getLocalidad())
-                        .orElse(usuario.getLocalidad()));
+            // Actualización de relaciones geográficas
+            if (dto.getPais() != null) {
+                usuario.setPais(paisRepository.findByNombre(dto.getPais())
+                        .orElse(usuario.getPais()));
             }
             if (dto.getProvincia() != null) {
                 usuario.setProvincia(provinciaRepository.findByNombre(dto.getProvincia())
                         .orElse(usuario.getProvincia()));
             }
-            if (dto.getPais() != null) {
-                usuario.setPais(paisRepository.findByNombre(dto.getPais())
-                        .orElse(usuario.getPais()));
+            if (dto.getLocalidad() != null) {
+                usuario.setLocalidad(localidadRepository.findByNombre(dto.getLocalidad())
+                        .orElse(usuario.getLocalidad()));
             }
 
             Usuario actualizado = usuarioRepository.save(usuario);
             return convertirADTO(actualizado);
-        }).orElse(null);
+        }).orElseThrow(() -> new RuntimeException("No se encontró el usuario con ID: " + id));
     }
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
@@ -139,7 +132,6 @@ public class UsuarioServicio implements UserDetailsService {
         return false;
     }
 
-    // Mapper privado para mantener la seguridad y el desacoplamiento
     private UsuarioDTO convertirADTO(Usuario usuario) {
         UsuarioDTO dto = new UsuarioDTO();
         dto.setId(usuario.getId());
@@ -151,10 +143,10 @@ public class UsuarioServicio implements UserDetailsService {
         dto.setDomicilio(usuario.getDomicilio());
         dto.setRol(usuario.getRol().toString());
 
-        // Devolvemos nombres en lugar de IDs para que el front-end los muestre fácil
-        if (usuario.getLocalidad() != null) dto.setLocalidad(usuario.getLocalidad().getNombre());
-        if (usuario.getProvincia() != null) dto.setProvincia(usuario.getProvincia().getNombre());
+        // Mapeamos los nombres desde los objetos relacionados
         if (usuario.getPais() != null) dto.setPais(usuario.getPais().getNombre());
+        if (usuario.getProvincia() != null) dto.setProvincia(usuario.getProvincia().getNombre());
+        if (usuario.getLocalidad() != null) dto.setLocalidad(usuario.getLocalidad().getNombre());
 
         return dto;
     }

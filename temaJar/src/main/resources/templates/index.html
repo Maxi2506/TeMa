@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro de Usuario - Optimización CV</title>
+    <style>
+        body { font-family: sans-serif; max-width: 500px; margin: 20px auto; padding: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; }
+        input, select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        button { background-color: #28a745; color: white; padding: 10px; border: none; width: 100%; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<h2>Registro de Nuevo Usuario</h2>
+
+<form id="registroForm" th:object="${usuario}">
+    <div class="form-group"><label>Nombre</label><input type="text" th:field="*{nombre}" required /></div>
+    <div class="form-group"><label>Apellido</label><input type="text" th:field="*{apellido}" required /></div>
+    <div class="form-group"><label>Edad</label><input type="number" th:field="*{edad}" required /></div>
+    <div class="form-group"><label>Correo</label><input type="email" th:field="*{correo}" required /></div>
+    <div class="form-group"><label>Contraseña</label><input type="password" th:field="*{clave}" required /></div>
+    <div class="form-group"><label>Teléfono</label><input type="number" th:field="*{telefono}" required /></div>
+    <div class="form-group"><label>Domicilio</label><input type="text" th:field="*{domicilio}" required /></div>
+
+    <hr>
+    <div class="form-group">
+        <label>País</label>
+        <select id="select-pais" th:field="*{pais}" required>
+            <option value="">Seleccione un país...</option>
+            <option th:each="p : ${listaPaises}" th:value="${p.nombre}" th:text="${p.nombre}"></option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Provincia</label>
+        <select id="select-provincia" th:field="*{provincia}" required>
+            <option value="">Seleccione primero un país</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Localidad</label>
+        <select id="select-localidad" th:field="*{localidad}" required>
+            <option value="">Seleccione primero una provincia</option>
+        </select>
+    </div>
+    <button type="submit">Crear Mi Cuenta</button>
+</form>
+
+<script th:inline="javascript">
+    const provinciasRaw = /*[[${listaProvincias}]]*/ [];
+    const localidadesRaw = /*[[${listaLocalidades}]]*/ [];
+
+    const selectPais = document.getElementById('select-pais');
+    const selectProv = document.getElementById('select-provincia');
+    const selectLoc = document.getElementById('select-localidad');
+
+    // --- FILTRADO DINÁMICO ---
+    selectPais.addEventListener('change', function() {
+        const filtradas = provinciasRaw.filter(p => p.nombrePais === this.value);
+        selectProv.innerHTML = '<option value="">Seleccione Provincia</option>';
+        filtradas.forEach(p => selectProv.add(new Option(p.nombre, p.nombre)));
+        selectLoc.innerHTML = '<option value="">Seleccione primero una provincia</option>';
+    });
+
+    selectProv.addEventListener('change', function() {
+        const filtradas = localidadesRaw.filter(l => l.nombreProvincia === this.value);
+        selectLoc.innerHTML = '<option value="">Seleccione Localidad</option>';
+        filtradas.forEach(l => selectLoc.add(new Option(l.nombre, l.nombre)));
+    });
+
+    // --- ENVÍO DE DATOS AL CONTROLLER ---
+    document.getElementById('registroForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const data = Object.fromEntries(new FormData(e.target).entries());
+
+        const response = await fetch('/usuario/registro', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            alert("¡Usuario registrado con éxito en la base de datos!");
+            window.location.reload();
+        } else {
+            alert("Error al registrar. Verifica los datos.");
+        }
+    });
+</script>
+</body>
+</html>

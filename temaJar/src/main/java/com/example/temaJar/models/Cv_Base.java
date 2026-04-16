@@ -1,25 +1,28 @@
 package com.example.temaJar.models;
 
+import com.example.temaJar.enumeracion.Habilidad;
 import jakarta.persistence.*;
+import java.util.List;
+import java.util.ArrayList;
 
 @Entity
 @Table(name="Cv_Base")
 public class Cv_Base {
 
-    @jakarta.persistence.Id
+    @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name="id")
-    private Long Id;
+    private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "id_nombre_usuario")
-    private Usuario nombre_usuario;
+    @JoinColumn(name = "id_usuario")
+    private Usuario usuario;
 
-    @Column(name="resumen_profesional")
+    @Column(name="resumen_profesional", columnDefinition = "TEXT")
     private String resumen_profesional;
 
     @Column(name="telefono")
-    private int telefono;
+    private long telefono;
 
     @Column(name="domicilio")
     private String domicilio;
@@ -39,105 +42,34 @@ public class Cv_Base {
     @JoinColumn(name = "id_pais")
     private Pais pais;
 
-    public Cv_Base() {
-    }
+    // --- NUEVA IMPLEMENTACIÓN CON ENUM DIRECTO ---
+    @ElementCollection(targetClass = Habilidad.class)
+    @CollectionTable(name = "cv_habilidades", joinColumns = @JoinColumn(name = "id_cv_base"))
+    @Column(name = "habilidad", length = 50) // <--- ESTO ES LO IMPORTANTE
+    @Enumerated(EnumType.STRING)
+    private List<Habilidad> habilidades;
 
-    public Cv_Base(Long id, Usuario nombre_usuario, String resumen_profesional, int telefono, String domicilio, String linkedin_url, Localidad localidad, Provincia provincia, Pais pais) {
-        Id = id;
-        this.nombre_usuario = nombre_usuario;
-        this.resumen_profesional = resumen_profesional;
-        this.telefono = telefono;
-        this.domicilio = domicilio;
-        this.linkedin_url = linkedin_url;
-        this.localidad = localidad;
-        this.provincia = provincia;
-        this.pais = pais;
-    }
+    public Cv_Base() {}
 
-    public Long getId() {
-        return Id;
-    }
-
-    public void setId(Long id) {
-        Id = id;
-    }
-
-    public Usuario getNombre_usuario() {
-        return nombre_usuario;
-    }
-
-    public void setNombre_usuario(Usuario nombre_usuario) {
-        this.nombre_usuario = nombre_usuario;
-    }
-
-    public String getResumen_profesional() {
-        return resumen_profesional;
-    }
-
-    public void setResumen_profesional(String resumen_profesional) {
-        this.resumen_profesional = resumen_profesional;
-    }
-
-    public int getTelefono() {
-        return telefono;
-    }
-
-    public void setTelefono(int telefono) {
-        this.telefono = telefono;
-    }
-
-    public String getDomicilio() {
-        return domicilio;
-    }
-
-    public void setDomicilio(String domicilio) {
-        this.domicilio = domicilio;
-    }
-
-    public String getLinkedin_url() {
-        return linkedin_url;
-    }
-
-    public void setLinkedin_url(String linkedin_url) {
-        this.linkedin_url = linkedin_url;
-    }
-
-    public Localidad getLocalidad() {
-        return localidad;
-    }
-
-    public void setLocalidad(Localidad localidad) {
-        this.localidad = localidad;
-    }
-
-    public Provincia getProvincia() {
-        return provincia;
-    }
-
-    public void setProvincia(Provincia provincia) {
-        this.provincia = provincia;
-    }
-
-    public Pais getPais() {
-        return pais;
-    }
-
-    public void setPais(Pais pais) {
-        this.pais = pais;
-    }
-
-    @Override
-    public String toString() {
-        return "Cv_Base{" +
-                "Id=" + Id +
-                ", nombre_usuario=" + nombre_usuario +
-                ", resumen_profesional='" + resumen_profesional + '\'' +
-                ", telefono=" + telefono +
-                ", domicilio='" + domicilio + '\'' +
-                ", linkedin_url='" + linkedin_url + '\'' +
-                ", localidad=" + localidad +
-                ", provincia=" + provincia +
-                ", pais=" + pais +
-                '}';
-    }
+    // Getters y Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public Usuario getUsuario() { return usuario; }
+    public void setUsuario(Usuario usuario) { this.usuario = usuario; }
+    public String getResumen_profesional() { return resumen_profesional; }
+    public void setResumen_profesional(String resumen_profesional) { this.resumen_profesional = resumen_profesional; }
+    public long getTelefono() { return telefono; }
+    public void setTelefono(long telefono) { this.telefono = telefono; }
+    public String getDomicilio() { return domicilio; }
+    public void setDomicilio(String domicilio) { this.domicilio = domicilio; }
+    public String getLinkedin_url() { return linkedin_url; }
+    public void setLinkedin_url(String linkedin_url) { this.linkedin_url = linkedin_url; }
+    public Localidad getLocalidad() { return localidad; }
+    public void setLocalidad(Localidad localidad) { this.localidad = localidad; }
+    public Provincia getProvincia() { return provincia; }
+    public void setProvincia(Provincia provincia) { this.provincia = provincia; }
+    public Pais getPais() { return pais; }
+    public void setPais(Pais pais) { this.pais = pais; }
+    public List<Habilidad> getHabilidades() { return habilidades; }
+    public void setHabilidades(List<Habilidad> habilidades) { this.habilidades = habilidades; }
 }

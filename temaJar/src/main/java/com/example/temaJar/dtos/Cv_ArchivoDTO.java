@@ -5,7 +5,7 @@ import java.time.LocalDate;
 public class Cv_ArchivoDTO {
 
     private Long id;
-    private Long idUsuario; // Referencia al Usuario (nombre_usuario)
+    private Long idUsuario;
     private String nombreArchivo;
     private LocalDate fechaCarga;
     private String textoExtraido;
