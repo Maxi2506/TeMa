@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Panel de Usuario - Optimización CV</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: 30px auto; padding: 20px; }
+    .card { border: 1px solid #ddd; padding: 20px; border-radius: 8px; background-color: #f9f9f9; margin-bottom: 20px; }
+    .card h3 { margin-top: 0; color: #333; }
+    .data-item { margin-bottom: 10px; font-size: 16px; }
+    .data-label { font-weight: bold; color: #555; }
+    .btn { display: inline-block; background-color: #28a745; color: white; padding: 12px 20px; border: none; border-radius: 4px; text-decoration: none; text-align: center; font-size: 16px; cursor: pointer; }
+    .btn:hover { background-color: #218838; }
+    .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; margin-bottom: 20px; padding-bottom: 10px; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h2>¡Hola, <span th:text="${usuario.nombre}">Usuario</span>! 👋</h2>
+  <a th:href="@{/vistas/login}" style="color: #dc3545; text-decoration: none; font-weight: bold;">Cerrar Sesión</a>
+</div>
+
+<p>Bienvenido a tu panel de control para la optimización de tu currículum con IA.</p>
+
+<div class="card">
+  <h3>Mis Datos de Registro</h3>
+  <div class="data-item"><span class="data-label">Nombre Completo:</span> <span th:text="${usuario.nombre} + ' ' + ${usuario.apellido}">Nombre Apellido</span></div>
+  <div class="data-item"><span class="data-label">Correo Electrónico:</span> <span th:text="${usuario.correo}">correo@ejemplo.com</span></div>
+  <div class="data-item"><span class="data-label">Teléfono:</span> <span th:text="${usuario.telefono}">123456789</span></div>
+  <div class="data-item"><span class="data-label">Ubicación:</span> <span th:text="${usuario.domicilio}">Domicilio Falso 123</span></div>
+</div>
+
+<div style="text-align: center; margin-top: 30px;">
+  <h3>¿Listo para mejorar tu perfil profesional?</h3>
+  <p>Sube tu CV base para que nuestro modelo de IA analice tus habilidades y optimice tu presentación.</p>
+  <a th:href="@{/vistas/carga-cv}" class="btn">Procesar y Cargar mi CV</a>
+</div>
+
+</body>
+</html>

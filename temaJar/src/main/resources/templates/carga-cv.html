@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Carga de CV - Optimización</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: 30px auto; padding: 20px; }
+    .card { border: 1px solid #ddd; padding: 20px; border-radius: 8px; background-color: #f9f9f9; text-align: center; }
+    .btn { display: inline-block; background-color: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 15px; }
+    .btn:hover { background-color: #218838; }
+    .file-input { margin: 20px 0; font-size: 16px; }
+    .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; margin-bottom: 20px; padding-bottom: 10px; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h2>Subir Currículum 📄</h2>
+  <a th:href="@{/vistas/index}" style="color: #007bff; text-decoration: none; font-weight: bold;">Volver al Inicio</a>
+</div>
+
+<div class="card">
+  <h3>Selecciona tu archivo</h3>
+  <p>Sube tu documento base para que la IA comience la optimización.</p>
+
+  <!-- El formulario apunta a la ruta de tu Cv_ArchivoController -->
+  <!-- enctype="multipart/form-data" es obligatorio para subir archivos -->
+  <form action="/cargacv" method="POST" enctype="multipart/form-data">
+
+    <input type="file" name="file" required />
+
+    <!-- Enviamos el ID de usuario requerido por tu servicio (por defecto el ID 1) -->
+    <input type="hidden" name="idUsuario" value="1" />
+
+    <button type="submit">Procesar Curriculum</button>
+  </form>
+</div>
+
+</body>
+</html>
