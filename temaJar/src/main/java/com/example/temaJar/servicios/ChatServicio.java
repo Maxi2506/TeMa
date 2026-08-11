@@ -32,7 +32,12 @@ public class ChatServicio {
         Map<String, Object> content = new HashMap<>();
         Map<String, Object> part = new HashMap<>();
 
-        part.put("text", "Eres un experto en reclutamiento IT. Analiza este CV y devuelve un JSON con: nombre, email, telefono, resumen profesional, habilidades tecnicas (array), experiencia laboral (array de objetos con empresa, puesto, periodo), educacion (array). CV: " + textoLimpio);
+        part.put("text",
+                "Eres un experto en reclutamiento IT. Analiza este CV y devuelve UNICAMENTE un JSON valido. " +
+                        "Sin texto introductorio, sin explicaciones, sin markdown, sin notas adicionales. " +
+                        "Formato obligatorio: {\"nombre\":\"...\",\"email\":\"...\",\"telefono\":\"...\",\"linkedin\":\"...\",\"github\":\"...\",\"direccion\":\"...\",\"resumen_profesional\":\"...\",\"habilidades_tecnicas\":[\"...\"],\"experiencia_laboral\":[{\"empresa\":\"...\",\"puesto\":\"...\",\"periodo\":\"...\"}],\"educacion\":[\"...\"]} " +
+                        "CV: " + textoLimpio
+        );
         content.put("parts", Collections.singletonList(part));
         body.put("contents", Collections.singletonList(content));
 

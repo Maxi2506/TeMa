@@ -2,299 +2,175 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>CV Adaptado - NovaTech</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Te-ma | CV Adaptado</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            border: "#333333", background: "#1A1A1A", foreground: "#F2F2F2",
+            primary: { DEFAULT: "#87D37C", foreground: "#1A1A1A" },
+            secondary: { DEFAULT: "#333333", foreground: "#A0A0A0" },
+            muted: { DEFAULT: "#333333", foreground: "#A0A0A0" },
+          },
+        }
+      }
+    }
+  </script>
+
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #eef2f7;
-      color: #2d3748;
-      line-height: 1.6;
-    }
-    .no-print { display: block; }
-    .print-only { display: none; }
-
-    .top-bar {
-      background: #1a202c;
-      color: white;
-      padding: 15px 30px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .top-bar h1 { font-size: 18px; font-weight: 600; }
-    .top-bar a { color: #a0aec0; text-decoration: none; font-size: 14px; }
-    .top-bar a:hover { color: white; }
-
-    .actions {
-      display: flex;
-      gap: 12px;
-      padding: 20px 30px;
-      background: white;
-      border-bottom: 1px solid #e2e8f0;
-      justify-content: center;
-    }
-    .btn {
-      padding: 10px 22px;
-      border: none;
-      border-radius: 6px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.2s;
-    }
-    .btn-primary {
-      background: #4f46e5;
-      color: white;
-    }
-    .btn-primary:hover { background: #4338ca; }
-    .btn-secondary {
-      background: #e2e8f0;
-      color: #4a5568;
-    }
-    .btn-secondary:hover { background: #cbd5e0; }
-
-    .container {
-      max-width: 850px;
-      margin: 30px auto;
-      padding: 0 20px 40px;
-    }
-
-    .cv-sheet {
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-      overflow: hidden;
-    }
-    .cv-header {
-      background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%);
-      color: white;
-      padding: 40px 50px;
-    }
-    .cv-header h2 {
-      font-size: 32px;
-      font-weight: 700;
-      margin-bottom: 10px;
-      letter-spacing: -0.5px;
-    }
-    .cv-header .contacto {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 18px;
-      margin-top: 14px;
-      font-size: 14px;
-      opacity: 0.92;
-    }
-    .cv-header .contacto span {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .cv-header .contacto a {
-      color: #bee3f8;
-      text-decoration: none;
-    }
-    .cv-header .contacto a:hover {
-      text-decoration: underline;
-    }
-
-    .badge-categoria {
-      display: inline-block;
-      background: rgba(255,255,255,0.2);
-      color: white;
-      padding: 4px 12px;
-      border-radius: 4px;
-      font-size: 12px;
-      font-weight: 600;
-      margin-top: 14px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .cv-body {
-      padding: 35px 50px;
-    }
-
-    .seccion {
-      margin-bottom: 28px;
-    }
-    .seccion:last-child { margin-bottom: 0; }
-
-    .seccion h3 {
-      font-size: 13px;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      color: #1e3a5f;
-      border-bottom: 2px solid #e2e8f0;
-      padding-bottom: 8px;
-      margin-bottom: 16px;
-    }
-
-    .resumen {
-      color: #4a5568;
-      font-size: 15px;
-      line-height: 1.7;
-    }
-
-    .skills {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    .skill-tag {
-      background: #edf2f7;
-      color: #2d3748;
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 500;
-      border: 1px solid #e2e8f0;
-    }
-
-    .experiencia-item {
-      margin-bottom: 18px;
-      padding-left: 16px;
-      border-left: 3px solid #4f46e5;
-    }
-    .experiencia-item:last-child { margin-bottom: 0; }
-    .experiencia-item .puesto {
-      font-weight: 600;
-      color: #1a202c;
-      font-size: 15px;
-    }
-    .experiencia-item .empresa {
-      color: #4a5568;
-      font-size: 14px;
-      margin-top: 2px;
-    }
-    .experiencia-item .periodo {
-      color: #718096;
-      font-size: 13px;
-      margin-top: 2px;
-      font-style: italic;
-    }
-
-    .educacion-lista {
-      list-style: none;
-    }
-    .educacion-lista li {
-      padding: 8px 0;
-      color: #4a5568;
-      font-size: 14px;
-      border-bottom: 1px dashed #e2e8f0;
-    }
-    .educacion-lista li:last-child { border-bottom: none; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade-in { animation: fadeIn 0.6s ease-out forwards; }
+    .animate-slide-up { animation: slideUp 0.5s ease-out forwards; }
+    .delay-100 { animation-delay: 100ms; }
+    .opacity-0 { opacity: 0; }
 
     @media print {
-      body { background: white; }
+      body { background: white !important; color: black !important; }
       .no-print { display: none !important; }
-      .print-only { display: block; }
-      .top-bar { display: none; }
-      .actions { display: none; }
-      .container { margin: 0; padding: 0; max-width: 100%; }
-      .cv-sheet {
-        box-shadow: none;
-        border-radius: 0;
-      }
-      .cv-header {
-        background: #1e3a5f !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-      }
-      .skill-tag {
-        background: #edf2f7 !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-      }
+      .cv-sheet { box-shadow: none !important; border-radius: 0 !important; }
+      .cv-header { background: #1e3a5f !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .skill-tag { background: #edf2f7 !important; border: 1px solid #e2e8f0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; color: #1a202c !important; }
+      .seccion h3 { color: #1e3a5f !important; border-bottom-color: #e2e8f0 !important; }
+      .experiencia-item { border-left-color: #4f46e5 !important; }
+      .experiencia-item .puesto { color: #1a202c !important; }
+      .experiencia-item .empresa { color: #4a5568 !important; }
+      .experiencia-item .periodo { color: #718096 !important; }
+      .educacion-lista li { color: #4a5568 !important; border-bottom-color: #e2e8f0 !important; }
+      .resumen { color: #4a5568 !important; }
+      .badge-categoria { background: rgba(255,255,255,0.2) !important; color: white !important; }
+      .contacto { color: rgba(255,255,255,0.9) !important; }
+      .contacto a { color: #bee3f8 !important; }
     }
   </style>
 </head>
-<body>
+<body class="bg-background text-foreground font-sans min-h-screen pb-12">
 
-<div class="top-bar no-print">
-  <h1>📄 NovaTech CV Parser</h1>
-  <a th:href="@{/vistas/index}">← Volver al Inicio</a>
-</div>
+<!-- Header -->
+<header class="px-6 h-16 flex items-center justify-between border-b border-border bg-background/80 backdrop-blur-md sticky top-0 z-50 no-print">
+  <div class="flex items-center gap-2">
+    <a th:href="@{/vistas/index}" class="flex items-center justify-center overflow-hidden rounded-lg">
+      <div class="p-1.5 bg-primary rounded-lg text-primary-foreground">
+        <i data-lucide="wand-2" class="w-6 h-6"></i>
+      </div>
+    </a>
+    <span class="text-xl font-bold tracking-tight text-primary">Te-ma</span>
+  </div>
+  <div class="flex items-center gap-3">
+    <a th:href="@{/vistas/seleccion-categoria(id=${cv != null ? cv.id : ''})}" class="text-sm font-medium text-muted-foreground hover:text-primary transition-colors flex items-center gap-1">
+      <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+      Otra categoría
+    </a>
+    <button onclick="descargarPDF()" class="bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-2 px-4 rounded-lg transition-all text-sm shadow-lg shadow-primary/10 flex items-center gap-2">
+      <i data-lucide="download" class="w-4 h-4"></i>
+      Descargar PDF
+    </button>
+  </div>
+</header>
 
-<div class="actions no-print">
-  <a th:href="@{/vistas/seleccion-categoria(id=${cv != null ? cv.id : ''})}" class="btn btn-secondary">
-    🔄 Adaptar a otra categoría
-  </a>
-  <button onclick="descargarPDF()" class="btn btn-primary">
-    ⬇️ Descargar PDF
-  </button>
-</div>
+<!-- Contenido -->
+<div class="max-w-[850px] mx-auto px-5 pt-8 pb-10 animate-fade-in">
 
-<div class="container">
-  <div class="cv-sheet">
+  <div class="cv-sheet bg-white rounded-lg shadow-lg overflow-hidden animate-slide-up delay-100 opacity-0">
 
-    <!-- HEADER -->
-    <div class="cv-header">
-      <h2 th:text="${cvParseado.nombre != null and !cvParseado.nombre.isEmpty()} ? ${cvParseado.nombre} : 'Nombre no disponible'">
+    <!-- HEADER DEL CV -->
+    <div class="cv-header bg-gradient-to-br from-[#1e3a5f] to-[#2d5a87] text-white px-12 py-10">
+      <h2 class="text-[32px] font-bold tracking-tight mb-2.5"
+          th:text="${cvParseado.nombre != null and !cvParseado.nombre.isEmpty()} ? ${cvParseado.nombre} : 'Nombre no disponible'">
         Nombre
       </h2>
 
-      <div class="contacto">
-          <span th:if="${cvParseado.email != null and !cvParseado.email.isEmpty()}">
-            ✉️ <span th:text="${cvParseado.email}">email</span>
+      <!-- CONTACTO - Solo muestra si tiene datos -->
+      <div class="contacto flex flex-wrap gap-5 mt-3.5 text-sm text-white/90">
+
+        <!-- Email -->
+        <span th:if="${cvParseado.email != null and !cvParseado.email.isEmpty()}" class="flex items-center gap-1.5">
+            <i data-lucide="mail" class="w-4 h-4"></i>
+            <span th:text="${cvParseado.email}">email</span>
           </span>
-        <span th:if="${cvParseado.telefono != null and !cvParseado.telefono.isEmpty()}">
-            📱 <span th:text="${cvParseado.telefono}">tel</span>
+
+        <!-- Teléfono -->
+        <span th:if="${cvParseado.telefono != null and !cvParseado.telefono.isEmpty()}" class="flex items-center gap-1.5">
+            <i data-lucide="phone" class="w-4 h-4"></i>
+            <span th:text="${cvParseado.telefono}">tel</span>
           </span>
-        <span th:if="${cvParseado.linkedin != null and !cvParseado.linkedin.isEmpty()}">
-            💼 <a th:href="${cvParseado.linkedin.startsWith('http') ? cvParseado.linkedin : 'https://' + cvParseado.linkedin}"
-                 th:text="${cvParseado.linkedin}" target="_blank">LinkedIn</a>
+
+        <!-- LinkedIn -->
+        <span th:if="${cvParseado.linkedin != null and !cvParseado.linkedin.isEmpty()}" class="flex items-center gap-1.5">
+            <i data-lucide="linkedin" class="w-4 h-4"></i>
+            <a th:href="${cvParseado.linkedin.startsWith('http') ? cvParseado.linkedin : 'https://' + cvParseado.linkedin}"
+               th:text="${cvParseado.linkedin}" target="_blank" class="text-blue-200 hover:underline">LinkedIn</a>
           </span>
-        <span th:if="${cvParseado.github != null and !cvParseado.github.isEmpty()}">
-            🐙 <a th:href="${cvParseado.github.startsWith('http') ? cvParseado.github : 'https://' + cvParseado.github}"
-                 th:text="${cvParseado.github}" target="_blank">GitHub</a>
+
+        <!-- GitHub -->
+        <span th:if="${cvParseado.github != null and !cvParseado.github.isEmpty()}" class="flex items-center gap-1.5">
+            <i data-lucide="github" class="w-4 h-4"></i>
+            <a th:href="${cvParseado.github.startsWith('http') ? cvParseado.github : 'https://' + cvParseado.github}"
+               th:text="${cvParseado.github}" target="_blank" class="text-blue-200 hover:underline">GitHub</a>
           </span>
-        <span th:if="${cvParseado.direccion != null and !cvParseado.direccion.isEmpty()}">
-            📍 <span th:text="${cvParseado.direccion}">Dirección</span>
+
+        <!-- Dirección -->
+        <span th:if="${cvParseado.direccion != null and !cvParseado.direccion.isEmpty()}" class="flex items-center gap-1.5">
+            <i data-lucide="map-pin" class="w-4 h-4"></i>
+            <span th:text="${cvParseado.direccion}">Dirección</span>
           </span>
+
       </div>
 
-      <div class="badge-categoria" th:text="'Adaptado para: ' + ${#strings.replace(categoria.name(), '_', ' ')}">
+      <div class="badge-categoria inline-block bg-white/20 text-white px-3 py-1 rounded mt-3.5 text-xs font-semibold uppercase tracking-wide"
+           th:text="'Adaptado para: ' + ${#strings.replace(categoria.name(), '_', ' ')}">
         CATEGORIA
       </div>
     </div>
 
-    <!-- BODY -->
-    <div class="cv-body">
+    <!-- BODY DEL CV -->
+    <div class="cv-body px-12 py-9">
 
       <!-- RESUMEN -->
-      <div class="seccion" th:if="${cvParseado.resumenProfesional != null and !cvParseado.resumenProfesional.isEmpty()}">
-        <h3>Perfil Profesional</h3>
-        <p class="resumen" th:text="${cvParseado.resumenProfesional}">Resumen...</p>
+      <div class="seccion mb-7" th:if="${cvParseado.resumenProfesional != null and !cvParseado.resumenProfesional.isEmpty()}">
+        <h3 class="text-[13px] uppercase tracking-[1.5px] text-[#1e3a5f] border-b-2 border-[#e2e8f0] pb-2 mb-4 font-bold">
+          Perfil Profesional
+        </h3>
+        <p class="resumen text-[15px] text-[#4a5568] leading-relaxed" th:text="${cvParseado.resumenProfesional}">Resumen...</p>
       </div>
 
       <!-- HABILIDADES -->
-      <div class="seccion" th:if="${cvParseado.habilidadesTecnicas != null and !cvParseado.habilidadesTecnicas.isEmpty()}">
-        <h3>Habilidades Técnicas</h3>
-        <div class="skills">
-          <span class="skill-tag" th:each="skill : ${cvParseado.habilidadesTecnicas}" th:text="${skill}">Skill</span>
+      <div class="seccion mb-7" th:if="${cvParseado.habilidadesTecnicas != null and !cvParseado.habilidadesTecnicas.isEmpty()}">
+        <h3 class="text-[13px] uppercase tracking-[1.5px] text-[#1e3a5f] border-b-2 border-[#e2e8f0] pb-2 mb-4 font-bold">
+          Habilidades Técnicas
+        </h3>
+        <div class="skills flex flex-wrap gap-2">
+            <span class="skill-tag bg-[#edf2f7] text-[#2d3748] px-3.5 py-1.5 rounded-full text-[13px] font-medium border border-[#e2e8f0]"
+                  th:each="skill : ${cvParseado.habilidadesTecnicas}" th:text="${skill}">Skill</span>
         </div>
       </div>
 
       <!-- EXPERIENCIA -->
-      <div class="seccion" th:if="${cvParseado.experienciaLaboral != null and !cvParseado.experienciaLaboral.isEmpty()}">
-        <h3>Experiencia Laboral</h3>
-        <div class="experiencia-item" th:each="exp : ${cvParseado.experienciaLaboral}">
-          <div class="puesto" th:text="${exp.puesto}">Puesto</div>
-          <div class="empresa" th:text="${exp.empresa}">Empresa</div>
-          <div class="periodo" th:text="${exp.periodo}">Periodo</div>
+      <div class="seccion mb-7" th:if="${cvParseado.experienciaLaboral != null and !cvParseado.experienciaLaboral.isEmpty()}">
+        <h3 class="text-[13px] uppercase tracking-[1.5px] text-[#1e3a5f] border-b-2 border-[#e2e8f0] pb-2 mb-4 font-bold">
+          Experiencia Laboral
+        </h3>
+        <div class="experiencia-item mb-4 pl-4 border-l-[3px] border-[#4f46e5]" th:each="exp : ${cvParseado.experienciaLaboral}">
+          <div class="puesto font-semibold text-[15px] text-[#1a202c]" th:text="${exp.puesto}">Puesto</div>
+          <div class="empresa text-[14px] text-[#4a5568] mt-0.5" th:text="${exp.empresa}">Empresa</div>
+          <div class="periodo text-[13px] text-[#718096] mt-0.5 italic" th:text="${exp.periodo}">Periodo</div>
         </div>
       </div>
 
       <!-- EDUCACIÓN -->
       <div class="seccion" th:if="${cvParseado.educacion != null and !cvParseado.educacion.isEmpty()}">
-        <h3>Educación</h3>
-        <ul class="educacion-lista">
-          <li th:each="edu : ${cvParseado.educacion}" th:text="${edu}">Educación</li>
+        <h3 class="text-[13px] uppercase tracking-[1.5px] text-[#1e3a5f] border-b-2 border-[#e2e8f0] pb-2 mb-4 font-bold">
+          Educación
+        </h3>
+        <ul class="educacion-lista list-none">
+          <li class="py-2 text-[14px] text-[#4a5568] border-b border-dashed border-[#e2e8f0]"
+              th:each="edu : ${cvParseado.educacion}" th:text="${edu}">Educación</li>
         </ul>
       </div>
 
@@ -303,6 +179,8 @@
 </div>
 
 <script>
+  lucide.createIcons();
+
   function descargarPDF() {
     const tituloOriginal = document.title;
     document.title = "CV_" + (document.querySelector('.cv-header h2')?.innerText?.trim() || "Adaptado").replace(/\s+/g, "_");
@@ -310,6 +188,5 @@
     setTimeout(() => { document.title = tituloOriginal; }, 1000);
   }
 </script>
-
 </body>
 </html>

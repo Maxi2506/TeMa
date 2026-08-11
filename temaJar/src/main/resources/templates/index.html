@@ -2,40 +2,200 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Panel de Usuario - Optimización CV</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Te-ma | Panel de Usuario</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            border: "#333333",
+            background: "#1A1A1A",
+            foreground: "#F2F2F2",
+            primary: {
+              DEFAULT: "#87D37C",
+              foreground: "#1A1A1A",
+            },
+            secondary: {
+              DEFAULT: "#333333",
+              foreground: "#A0A0A0",
+            },
+            muted: {
+              DEFAULT: "#333333",
+              foreground: "#A0A0A0",
+            },
+          },
+        }
+      }
+    }
+  </script>
+
   <style>
-    body { font-family: sans-serif; max-width: 600px; margin: 30px auto; padding: 20px; }
-    .card { border: 1px solid #ddd; padding: 20px; border-radius: 8px; background-color: #f9f9f9; margin-bottom: 20px; }
-    .card h3 { margin-top: 0; color: #333; }
-    .data-item { margin-bottom: 10px; font-size: 16px; }
-    .data-label { font-weight: bold; color: #555; }
-    .btn { display: inline-block; background-color: #28a745; color: white; padding: 12px 20px; border: none; border-radius: 4px; text-decoration: none; text-align: center; font-size: 16px; cursor: pointer; }
-    .btn:hover { background-color: #218838; }
-    .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; margin-bottom: 20px; padding-bottom: 10px; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+    .animate-fade-in { animation: fadeIn 0.7s ease-out forwards; }
+    .animate-slide-up { animation: slideUp 0.8s ease-out forwards; }
+    .delay-100 { animation-delay: 100ms; }
+    .delay-200 { animation-delay: 200ms; }
+    .delay-300 { animation-delay: 300ms; }
+
+    html { scroll-behavior: smooth; }
+    .opacity-0 { opacity: 0; }
   </style>
 </head>
-<body>
+<body class="flex flex-col min-h-screen bg-background text-foreground font-sans">
 
-<div class="header">
-  <h2>¡Hola, <span th:text="${usuario.nombre}">Usuario</span>! 👋</h2>
-  <a th:href="@{/vistas/login}" style="color: #dc3545; text-decoration: none; font-weight: bold;">Cerrar Sesión</a>
-</div>
+<!-- Header -->
+<header class="px-6 h-16 flex items-center justify-between border-b border-border backdrop-blur-md sticky top-0 z-50 bg-background/80">
+  <div class="flex items-center gap-2">
+    <div class="flex items-center justify-center overflow-hidden rounded-lg">
+      <div class="p-1.5 bg-primary rounded-lg text-primary-foreground">
+        <i data-lucide="wand-2" class="w-6 h-6"></i>
+      </div>
+    </div>
+    <span class="text-xl font-bold tracking-tight text-primary">Te-ma</span>
+  </div>
+  <nav class="flex items-center gap-6">
+      <span class="text-sm text-muted-foreground hidden sm:inline">
+        Hola, <span th:text="${usuario.nombre}" class="text-foreground font-medium">Usuario</span>
+      </span>
+    <a th:href="@{/vistas/login}" class="text-sm font-medium text-red-400 hover:text-red-300 transition-colors flex items-center gap-1">
+      <i data-lucide="log-out" class="w-4 h-4"></i>
+      Cerrar Sesión
+    </a>
+  </nav>
+</header>
 
-<p>Bienvenido a tu panel de control para la optimización de tu currículum con IA.</p>
+<main class="flex-1">
 
-<div class="card">
-  <h3>Mis Datos de Registro</h3>
-  <div class="data-item"><span class="data-label">Nombre Completo:</span> <span th:text="${usuario.nombre} + ' ' + ${usuario.apellido}">Nombre Apellido</span></div>
-  <div class="data-item"><span class="data-label">Correo Electrónico:</span> <span th:text="${usuario.correo}">correo@ejemplo.com</span></div>
-  <div class="data-item"><span class="data-label">Teléfono:</span> <span th:text="${usuario.telefono}">123456789</span></div>
-  <div class="data-item"><span class="data-label">Ubicación:</span> <span th:text="${usuario.domicilio}">Domicilio Falso 123</span></div>
-</div>
+  <!-- Hero / Bienvenida -->
+  <section class="py-16 px-6 max-w-5xl mx-auto text-center">
+    <div class="animate-fade-in inline-block mb-4 px-3 py-1 bg-secondary text-primary rounded-full text-xs font-semibold tracking-wide uppercase border border-primary/20">
+      Panel de Control
+    </div>
 
-<div style="text-align: center; margin-top: 30px;">
-  <h3>¿Listo para mejorar tu perfil profesional?</h3>
-  <p>Sube tu CV base para que nuestro modelo de IA analice tus habilidades y optimice tu presentación.</p>
-  <a th:href="@{/vistas/carga-cv}" class="btn">Procesar y Cargar mi CV</a>
-</div>
+    <h1 class="animate-slide-up delay-100 text-4xl md:text-5xl font-extrabold tracking-tight text-foreground mb-4 leading-tight opacity-0">
+      ¡Hola, <span th:text="${usuario.nombre}" class="text-primary">Usuario</span>! 👋
+    </h1>
 
+    <p class="animate-slide-up delay-200 text-lg text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed opacity-0">
+      Bienvenido a tu panel de control para la optimización de tu currículum con IA.
+      Sube tu CV base para que nuestro modelo analice tus habilidades y optimice tu presentación.
+    </p>
+  </section>
+
+  <!-- Datos del Usuario -->
+  <section class="px-6 max-w-5xl mx-auto pb-12">
+    <div class="grid md:grid-cols-2 gap-6 animate-slide-up delay-300 opacity-0">
+
+      <!-- Card: Datos Personales -->
+      <div class="bg-secondary p-8 rounded-xl border border-border shadow-sm">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="p-2 bg-primary/10 rounded-lg">
+            <i data-lucide="user" class="w-5 h-5 text-primary"></i>
+          </div>
+          <h3 class="text-xl font-bold text-foreground">Mis Datos</h3>
+        </div>
+
+        <div class="space-y-4">
+          <div class="flex justify-between items-center py-2 border-b border-border/50">
+            <span class="text-muted-foreground text-sm">Nombre Completo</span>
+            <span th:text="${usuario.nombre} + ' ' + ${usuario.apellido}" class="text-foreground font-medium text-sm">Nombre Apellido</span>
+          </div>
+          <div class="flex justify-between items-center py-2 border-b border-border/50">
+            <span class="text-muted-foreground text-sm">Correo Electrónico</span>
+            <span th:text="${usuario.correo}" class="text-foreground font-medium text-sm">correo@ejemplo.com</span>
+          </div>
+          <div class="flex justify-between items-center py-2 border-b border-border/50">
+            <span class="text-muted-foreground text-sm">Teléfono</span>
+            <span th:text="${usuario.telefono}" class="text-foreground font-medium text-sm">123456789</span>
+          </div>
+          <div class="flex justify-between items-center py-2">
+            <span class="text-muted-foreground text-sm">Ubicación</span>
+            <span th:text="${usuario.domicilio}" class="text-foreground font-medium text-sm text-right">Domicilio Falso 123</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card: Acción Principal -->
+      <div class="bg-gradient-to-br from-primary/10 to-transparent p-8 rounded-xl border border-primary/20 shadow-sm flex flex-col justify-center items-center text-center">
+        <div class="p-3 bg-primary/20 rounded-full mb-4">
+          <i data-lucide="file-up" class="w-8 h-8 text-primary"></i>
+        </div>
+
+        <h3 class="text-2xl font-bold text-foreground mb-3">¿Listo para mejorar tu perfil?</h3>
+        <p class="text-muted-foreground mb-8 leading-relaxed">
+          Subí tu CV base para que nuestro modelo de IA analice tus habilidades y optimice tu presentación profesional.
+        </p>
+
+        <a th:href="@{/vistas/carga-cv}" class="inline-flex h-12 items-center justify-center rounded-md bg-primary px-8 text-base font-bold text-primary-foreground shadow-lg transition-all hover:bg-primary/90 hover:shadow-primary/20 hover:scale-105">
+          <i data-lucide="upload" class="w-5 h-5 mr-2"></i>
+          Procesar y Cargar mi CV
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Features rápidas -->
+  <section class="py-16 bg-[#222222]">
+    <div class="px-6 max-w-5xl mx-auto">
+      <div class="text-center mb-12">
+        <h2 class="text-2xl font-bold text-primary mb-2">¿Qué podés hacer?</h2>
+        <p class="text-muted-foreground">Tu camino hacia el empleo ideal comienza acá.</p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="bg-secondary p-6 rounded-xl border border-border text-center hover:border-primary/50 transition-all">
+          <div class="p-3 bg-primary/10 rounded-full inline-flex mb-4">
+            <i data-lucide="file-text" class="w-6 h-6 text-primary"></i>
+          </div>
+          <h4 class="font-bold text-foreground mb-2">Subí tu CV</h4>
+          <p class="text-muted-foreground text-sm">Cargá tu documento en PDF o Word para comenzar.</p>
+        </div>
+
+        <div class="bg-secondary p-6 rounded-xl border border-border text-center hover:border-primary/50 transition-all">
+          <div class="p-3 bg-primary/10 rounded-full inline-flex mb-4">
+            <i data-lucide="brain-circuit" class="w-6 h-6 text-primary"></i>
+          </div>
+          <h4 class="font-bold text-foreground mb-2">Analiza con IA</h4>
+          <p class="text-muted-foreground text-sm">Nuestra IA extrae y estructura tu información profesional.</p>
+        </div>
+
+        <div class="bg-secondary p-6 rounded-xl border border-border text-center hover:border-primary/50 transition-all">
+          <div class="p-3 bg-primary/10 rounded-full inline-flex mb-4">
+            <i data-lucide="target" class="w-6 h-6 text-primary"></i>
+          </div>
+          <h4 class="font-bold text-foreground mb-2">Adaptá por categoría</h4>
+          <p class="text-muted-foreground text-sm">Optimizá tu CV para el puesto específico que buscás.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- Footer -->
+<footer class="py-8 px-6 border-t border-border bg-background">
+  <div class="max-w-5xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+    <div class="flex items-center gap-2">
+      <i data-lucide="wand-2" class="w-5 h-5 text-primary"></i>
+      <span class="font-bold text-lg text-primary">Te-ma</span>
+    </div>
+    <p class="text-sm text-muted-foreground">© 2026 Te-ma. Todos los derechos reservados.</p>
+  </div>
+</footer>
+
+<script>
+  lucide.createIcons();
+</script>
 </body>
 </html>

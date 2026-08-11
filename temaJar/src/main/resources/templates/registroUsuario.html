@@ -2,71 +2,265 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Registro de Usuario - Optimización CV</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Te-ma | Crear Cuenta</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        border: "#333333",
+                        background: "#1A1A1A",
+                        foreground: "#F2F2F2",
+                        primary: {
+                            DEFAULT: "#87D37C",
+                            foreground: "#1A1A1A",
+                        },
+                        secondary: {
+                            DEFAULT: "#333333",
+                            foreground: "#A0A0A0",
+                        },
+                        muted: {
+                            DEFAULT: "#333333",
+                            foreground: "#A0A0A0",
+                        },
+                    },
+                }
+            }
+        }
+    </script>
+
     <style>
-        body { font-family: sans-serif; max-width: 500px; margin: 20px auto; padding: 20px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; font-weight: bold; }
-        input, select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
-        button { background-color: #28a745; color: white; padding: 10px; border: none; width: 100%; cursor: pointer; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .animate-fade-in { animation: fadeIn 0.6s ease-out forwards; }
+        .animate-slide-up { animation: slideUp 0.7s ease-out forwards; }
+        .delay-100 { animation-delay: 100ms; }
+        .delay-200 { animation-delay: 200ms; }
+
+        .opacity-0 { opacity: 0; }
+
+        .btn-glow:hover {
+            box-shadow: 0 0 20px rgba(135, 211, 124, 0.3);
+        }
+
+        /* Estilo custom para selects */
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23A0A0A0' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.7rem center;
+            background-repeat: no-repeat;
+            background-size: 1.2em 1.2em;
+            padding-right: 2.5rem;
+        }
     </style>
 </head>
-<body>
+<body class="min-h-screen bg-background text-foreground font-sans flex items-center justify-center px-4 py-8">
 
-<h2>Registro de Nuevo Usuario</h2>
+<!-- Fondo decorativo -->
+<div class="fixed inset-0 pointer-events-none">
+    <div class="absolute top-0 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl"></div>
+</div>
 
-<form id="registroForm">
-    <div class="form-group"><label>Nombre</label><input type="text" name="nombre" required /></div>
-    <div class="form-group"><label>Apellido</label><input type="text" name="apellido" required /></div>
-    <div class="form-group"><label>Edad</label><input type="number" name="edad" required /></div>
-    <div class="form-group"><label>Correo</label><input type="email" name="correo" required /></div>
-    <div class="form-group"><label>Contraseña</label><input type="password" name="clave" required /></div>
-    <div class="form-group"><label>Teléfono</label><input type="number" name="telefono" required /></div>
-    <div class="form-group"><label>Domicilio</label><input type="text" name="domicilio" required /></div>
+<!-- Card principal -->
+<div class="w-full max-w-lg relative z-10 animate-slide-up opacity-0">
 
-    <hr>
-    <div class="form-group">
-        <label>País</label>
-        <select id="select-pais" name="pais" required>
-            <option value="">Seleccione un país...</option>
-            <option th:each="p : ${listaPaises}" th:value="${p.nombre}" th:text="${p.nombre}"></option>
-        </select>
+    <!-- Logo -->
+    <div class="text-center mb-6 animate-fade-in opacity-0">
+        <div class="inline-flex items-center justify-center p-3 bg-primary/10 rounded-xl mb-3">
+            <i data-lucide="wand-2" class="w-8 h-8 text-primary"></i>
+        </div>
+        <h1 class="text-3xl font-bold tracking-tight text-foreground">Te-ma</h1>
+        <p class="text-muted-foreground mt-1 text-sm">Optimización de CV con IA</p>
     </div>
-    <div class="form-group">
-        <label>Provincia</label>
-        <select id="select-provincia" name="provincia" required>
-            <option value="">Seleccione primero un país</option>
-        </select>
-    </div>
-    <div class="form-group">
-        <label>Localidad</label>
-        <select id="select-localidad" name="localidad" required>
-            <option value="">Seleccione primero una provincia</option>
-        </select>
-    </div>
-    <button type="submit">Crear Mi Cuenta</button>
-</form>
 
-<select id="master-provincias" style="display: none;">
+    <!-- Formulario -->
+    <div class="bg-secondary p-8 rounded-2xl border border-border shadow-xl animate-slide-up delay-100 opacity-0">
+        <h2 class="text-xl font-bold text-foreground mb-6 text-center">Crear Cuenta</h2>
+
+        <form id="registroForm" class="space-y-4">
+
+            <!-- Nombre y Apellido (fila) -->
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-medium text-muted-foreground mb-1.5">Nombre</label>
+                    <input type="text" name="nombre" required placeholder="Juan"
+                           class="w-full px-3 py-2.5 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-sm" />
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-muted-foreground mb-1.5">Apellido</label>
+                    <input type="text" name="apellido" required placeholder="Pérez"
+                           class="w-full px-3 py-2.5 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-sm" />
+                </div>
+            </div>
+
+            <!-- Edad -->
+            <div>
+                <label class="block text-xs font-medium text-muted-foreground mb-1.5">Edad</label>
+                <input type="number" name="edad" required placeholder="25"
+                       class="w-full px-3 py-2.5 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-sm" />
+            </div>
+
+            <!-- Correo -->
+            <div>
+                <label class="block text-xs font-medium text-muted-foreground mb-1.5">Correo Electrónico</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i data-lucide="mail" class="w-4 h-4 text-muted-foreground"></i>
+                    </div>
+                    <input type="email" name="correo" required placeholder="juan@ejemplo.com"
+                           class="w-full pl-10 pr-3 py-2.5 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-sm" />
+                </div>
+            </div>
+
+            <!-- Contraseña -->
+            <div>
+                <label class="block text-xs font-medium text-muted-foreground mb-1.5">Contraseña</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i data-lucide="lock" class="w-4 h-4 text-muted-foreground"></i>
+                    </div>
+                    <input type="password" name="clave" required placeholder="••••••••"
+                           class="w-full pl-10 pr-3 py-2.5 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-sm" />
+                </div>
+            </div>
+
+            <!-- Teléfono -->
+            <div>
+                <label class="block text-xs font-medium text-muted-foreground mb-1.5">Teléfono</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i data-lucide="phone" class="w-4 h-4 text-muted-foreground"></i>
+                    </div>
+                    <input type="number" name="telefono" required placeholder="2611234567"
+                           class="w-full pl-10 pr-3 py-2.5 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-sm" />
+                </div>
+            </div>
+
+            <!-- Domicilio -->
+            <div>
+                <label class="block text-xs font-medium text-muted-foreground mb-1.5">Domicilio</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i data-lucide="map-pin" class="w-4 h-4 text-muted-foreground"></i>
+                    </div>
+                    <input type="text" name="domicilio" required placeholder="Calle Falsa 123"
+                           class="w-full pl-10 pr-3 py-2.5 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-sm" />
+                </div>
+            </div>
+
+            <!-- Separador Ubicación -->
+            <div class="relative my-4">
+                <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-border"></div>
+                </div>
+                <div class="relative flex justify-center text-xs">
+                    <span class="px-2 bg-secondary text-muted-foreground uppercase tracking-wider">Ubicación</span>
+                </div>
+            </div>
+
+            <!-- País -->
+            <div>
+                <label class="block text-xs font-medium text-muted-foreground mb-1.5">País</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i data-lucide="globe" class="w-4 h-4 text-muted-foreground"></i>
+                    </div>
+                    <select id="select-pais" name="pais" required
+                            class="w-full pl-10 pr-3 py-2.5 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-sm cursor-pointer">
+                        <option value="">Seleccione un país...</option>
+                        <option th:each="p : ${listaPaises}" th:value="${p.nombre}" th:text="${p.nombre}"></option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Provincia -->
+            <div>
+                <label class="block text-xs font-medium text-muted-foreground mb-1.5">Provincia</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i data-lucide="map" class="w-4 h-4 text-muted-foreground"></i>
+                    </div>
+                    <select id="select-provincia" name="provincia" required
+                            class="w-full pl-10 pr-3 py-2.5 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-sm cursor-pointer">
+                        <option value="">Seleccione primero un país</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Localidad -->
+            <div>
+                <label class="block text-xs font-medium text-muted-foreground mb-1.5">Localidad</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i data-lucide="home" class="w-4 h-4 text-muted-foreground"></i>
+                    </div>
+                    <select id="select-localidad" name="localidad" required
+                            class="w-full pl-10 pr-3 py-2.5 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-sm cursor-pointer">
+                        <option value="">Seleccione primero una provincia</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Botón -->
+            <button type="submit"
+                    class="w-full mt-4 py-3 bg-primary text-primary-foreground font-bold rounded-lg transition-all hover:bg-primary/90 btn-glow flex items-center justify-center gap-2">
+                <i data-lucide="user-plus" class="w-4 h-4"></i>
+                Crear Mi Cuenta
+            </button>
+        </form>
+
+        <!-- Link a login -->
+        <div class="relative my-5">
+            <div class="absolute inset-0 flex items-center">
+                <div class="w-full border-t border-border"></div>
+            </div>
+            <div class="relative flex justify-center text-xs">
+                <span class="px-2 bg-secondary text-muted-foreground">o</span>
+            </div>
+        </div>
+
+        <a th:href="@{/vistas/login}"
+           class="block text-center text-sm text-muted-foreground hover:text-primary transition-colors">
+            ¿Ya tenés cuenta? <span class="font-semibold text-primary">Iniciar Sesión</span>
+        </a>
+    </div>
+
+    <p class="text-center text-xs text-muted-foreground mt-6 animate-fade-in delay-200 opacity-0">
+        © 2026 Te-ma. Todos los derechos reservados.
+    </p>
+</div>
+
+<!-- Masters ocultos (lógica original) -->
+<select id="master-provincias" class="hidden">
     <option th:each="p : ${listaProvincias}" th:value="${p.nombre}" th:text="${p.nombre}" th:data-pais="${p.nombrePais}"></option>
 </select>
-<select id="master-localidades" style="display: none;">
+<select id="master-localidades" class="hidden">
     <option th:each="l : ${listaLocalidades}" th:value="${l.nombre}" th:text="${l.nombre}" th:data-provincia="${l.nombreProvincia}"></option>
 </select>
 
 <script>
+    lucide.createIcons();
+
     document.addEventListener('DOMContentLoaded', function() {
         const selectPais = document.getElementById('select-pais');
         const selectProv = document.getElementById('select-provincia');
         const selectLoc = document.getElementById('select-localidad');
-
         const masterProv = document.getElementById('master-provincias');
         const masterLoc = document.getElementById('master-localidades');
 
-        // --- FILTRADO DINÁMICO ---
+        // --- FILTRADO DINÁMICO (lógica original preservada) ---
         selectPais.addEventListener('change', function() {
             const paisSeleccionado = this.value;
-
             selectProv.innerHTML = '<option value="">Seleccione Provincia...</option>';
             selectLoc.innerHTML = '<option value="">Seleccione primero una provincia</option>';
 
@@ -81,7 +275,6 @@
 
         selectProv.addEventListener('change', function() {
             const provSeleccionada = this.value;
-
             selectLoc.innerHTML = '<option value="">Seleccione Localidad...</option>';
 
             if (provSeleccionada) {
@@ -93,11 +286,16 @@
             }
         });
 
-        // --- ENVÍO DE DATOS AL CONTROLLER VIA FETCH ---
+        // --- ENVÍO VIA FETCH (lógica original preservada) ---
         document.getElementById('registroForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            // FormData mapeará automáticamente los campos usando los atributos 'name' del HTML
             const data = Object.fromEntries(new FormData(e.target).entries());
+
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Procesando...';
+            btn.disabled = true;
+            lucide.createIcons();
 
             const response = await fetch('/usuario/registro', {
                 method: 'POST',
@@ -106,10 +304,25 @@
             });
 
             if (response.ok) {
-                alert("¡Usuario registrado con éxito en la base de datos!");
-                window.location.reload();
+                btn.innerHTML = '<i data-lucide="check-circle" class="w-4 h-4"></i> ¡Registrado!';
+                btn.classList.remove('bg-primary');
+                btn.classList.add('bg-green-600');
+                lucide.createIcons();
+                setTimeout(() => {
+                    window.location.href = '/vistas/login';
+                }, 1500);
             } else {
-                alert("Error al registrar. Verifica los datos.");
+                btn.innerHTML = '<i data-lucide="alert-circle" class="w-4 h-4"></i> Error al registrar';
+                btn.classList.remove('bg-primary');
+                btn.classList.add('bg-red-500');
+                lucide.createIcons();
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                    btn.classList.remove('bg-red-500');
+                    btn.classList.add('bg-primary');
+                    btn.disabled = false;
+                    lucide.createIcons();
+                }, 2500);
             }
         });
     });

@@ -2,39 +2,197 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Carga de CV - Optimización</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Te-ma | Subir CV</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            border: "#333333",
+            background: "#1A1A1A",
+            foreground: "#F2F2F2",
+            primary: {
+              DEFAULT: "#87D37C",
+              foreground: "#1A1A1A",
+            },
+            secondary: {
+              DEFAULT: "#333333",
+              foreground: "#A0A0A0",
+            },
+            muted: {
+              DEFAULT: "#333333",
+              foreground: "#A0A0A0",
+            },
+          },
+        }
+      }
+    }
+  </script>
+
   <style>
-    body { font-family: sans-serif; max-width: 600px; margin: 30px auto; padding: 20px; }
-    .card { border: 1px solid #ddd; padding: 20px; border-radius: 8px; background-color: #f9f9f9; text-align: center; }
-    .btn { display: inline-block; background-color: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 15px; }
-    .btn:hover { background-color: #218838; }
-    .file-input { margin: 20px 0; font-size: 16px; }
-    .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; margin-bottom: 20px; padding-bottom: 10px; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+    .animate-slide-up { animation: slideUp 0.4s ease-out forwards; }
+    .opacity-0 { opacity: 0; }
   </style>
 </head>
-<body>
+<body class="min-h-screen bg-background text-foreground font-sans">
 
-<div class="header">
-  <h2>Subir Currículum 📄</h2>
-  <a th:href="@{/vistas/index}" style="color: #007bff; text-decoration: none; font-weight: bold;">Volver al Inicio</a>
-</div>
+<!-- Header -->
+<header class="px-6 h-16 flex items-center justify-between border-b border-border bg-background/80 backdrop-blur-md sticky top-0 z-50">
+  <div class="flex items-center gap-2">
+    <a th:href="@{/vistas/index}" class="flex items-center justify-center overflow-hidden rounded-lg">
+      <div class="p-1.5 bg-primary rounded-lg text-primary-foreground">
+        <i data-lucide="wand-2" class="w-6 h-6"></i>
+      </div>
+    </a>
+    <span class="text-xl font-bold tracking-tight text-primary">Te-ma</span>
+  </div>
+  <a th:href="@{/vistas/index}" class="text-sm font-medium text-muted-foreground hover:text-primary transition-colors flex items-center gap-1">
+    <i data-lucide="chevron-left" class="w-4 h-4"></i>
+    Volver al Inicio
+  </a>
+</header>
 
-<div class="card">
-  <h3>Selecciona tu archivo</h3>
-  <p>Sube tu documento base para que la IA comience la optimización.</p>
+<main class="py-12 px-4">
+  <div class="w-full max-w-3xl mx-auto animate-fade-in">
 
-  <!-- El formulario apunta a la ruta de tu Cv_ArchivoController -->
-  <!-- enctype="multipart/form-data" es obligatorio para subir archivos -->
-  <form action="/cargacv" method="POST" enctype="multipart/form-data">
+    <!-- Título -->
+    <div class="text-center space-y-4 mb-10">
+      <div class="inline-block px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-bold uppercase tracking-widest border border-primary/20">
+        Paso 1 de 2
+      </div>
+      <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight text-foreground">
+        Subí tu Currículum
+      </h1>
+      <p class="text-muted-foreground text-lg max-w-md mx-auto">
+        Subí tu documento base para que la IA comience la optimización.
+      </p>
+    </div>
 
-    <input type="file" name="file" required />
+    <!-- Formulario -->
+    <form action="/cargacv" method="POST" enctype="multipart/form-data" class="animate-slide-up delay-100 opacity-0">
 
-    <!-- Enviamos el ID de usuario requerido por tu servicio (por defecto el ID 1) -->
-    <input type="hidden" name="idUsuario" value="1" />
+      <!-- Campo oculto idUsuario -->
+      <input type="hidden" name="idUsuario" value="1" />
 
-    <button type="submit">Procesar Curriculum</button>
-  </form>
-</div>
+      <!-- Dropzone -->
+      <div
+              id="dropzone"
+              class="bg-secondary/30 p-12 rounded-2xl border-2 border-dashed border-border text-center cursor-pointer hover:border-primary/50 hover:bg-secondary/40 transition-all mb-8"
+              onclick="document.getElementById('file-input').click()"
+      >
+        <input
+                type="file"
+                id="file-input"
+                name="file"
+                class="hidden"
+                accept=".pdf,.doc,.docx"
+                required
+                onchange="mostrarArchivo(this)"
+        />
 
+        <div class="flex flex-col items-center pointer-events-none">
+          <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+            <i data-lucide="upload-cloud" class="w-10 h-10 text-primary"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-2 text-foreground">Arrastrá tu archivo aquí</h3>
+          <p id="file-name" class="text-sm text-muted-foreground mb-2">
+            O hacé clic para explorar en tu equipo
+          </p>
+          <p class="text-xs text-muted-foreground/60">Formatos aceptados: PDF, Word (.doc, .docx)</p>
+        </div>
+      </div>
+
+      <!-- Info del archivo seleccionado -->
+      <div id="file-info" class="hidden bg-secondary/50 border border-primary/20 rounded-xl p-4 mb-8 flex items-center gap-3">
+        <div class="p-2 bg-primary/10 rounded-lg">
+          <i data-lucide="file-text" class="w-5 h-5 text-primary"></i>
+        </div>
+        <div class="flex-1 min-w-0">
+          <p id="file-name-display" class="text-sm font-medium text-foreground truncate">archivo.pdf</p>
+          <p class="text-xs text-muted-foreground">Listo para procesar</p>
+        </div>
+        <button type="button" onclick="limpiarArchivo()" class="p-1.5 hover:bg-red-500/10 rounded-lg transition-colors text-muted-foreground hover:text-red-400">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Botón -->
+      <div class="flex justify-end">
+        <button
+                type="submit"
+                id="btn-submit"
+                class="px-10 py-3 bg-primary text-primary-foreground font-bold rounded-lg hover:bg-primary/90 transition-all shadow-lg shadow-primary/10 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled
+        >
+          <i data-lucide="sparkles" class="w-4 h-4"></i>
+          Procesar Curriculum
+        </button>
+      </div>
+    </form>
+
+  </div>
+</main>
+
+<script>
+  lucide.createIcons();
+
+  function mostrarArchivo(input) {
+    const file = input.files[0];
+    if (file) {
+      document.getElementById('file-name').textContent = "Archivo seleccionado: " + file.name;
+      document.getElementById('file-name').classList.add('text-primary');
+
+      document.getElementById('file-name-display').textContent = file.name;
+      document.getElementById('file-info').classList.remove('hidden');
+
+      document.getElementById('btn-submit').disabled = false;
+    }
+  }
+
+  function limpiarArchivo() {
+    document.getElementById('file-input').value = '';
+    document.getElementById('file-name').textContent = "O hacé clic para explorar en tu equipo";
+    document.getElementById('file-name').classList.remove('text-primary');
+    document.getElementById('file-info').classList.add('hidden');
+    document.getElementById('btn-submit').disabled = true;
+  }
+
+  // Drag & drop visual
+  const dropzone = document.getElementById('dropzone');
+
+  ['dragenter', 'dragover'].forEach(eventName => {
+    dropzone.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      dropzone.classList.add('border-primary', 'bg-secondary/60');
+    });
+  });
+
+  ['dragleave', 'drop'].forEach(eventName => {
+    dropzone.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      dropzone.classList.remove('border-primary', 'bg-secondary/60');
+    });
+  });
+
+  dropzone.addEventListener('drop', (e) => {
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      document.getElementById('file-input').files = files;
+      mostrarArchivo(document.getElementById('file-input'));
+    }
+  });
+</script>
 </body>
 </html>

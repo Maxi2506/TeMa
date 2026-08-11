@@ -2,36 +2,160 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Iniciar Sesión - Optimización CV</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Te-ma | Iniciar Sesión</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        border: "#333333",
+                        background: "#1A1A1A",
+                        foreground: "#F2F2F2",
+                        primary: {
+                            DEFAULT: "#87D37C",
+                            foreground: "#1A1A1A",
+                        },
+                        secondary: {
+                            DEFAULT: "#333333",
+                            foreground: "#A0A0A0",
+                        },
+                        muted: {
+                            DEFAULT: "#333333",
+                            foreground: "#A0A0A0",
+                        },
+                    },
+                }
+            }
+        }
+    </script>
+
     <style>
-        body { font-family: sans-serif; max-width: 400px; margin: 50px auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; font-weight: bold; margin-bottom: 5px; }
-        input { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        button { background-color: #007bff; color: white; padding: 10px; border: none; width: 100%; cursor: pointer; border-radius: 4px; font-size: 16px; }
-        button:hover { background-color: #0056b3; }
-        .register-link { text-align: center; margin-top: 15px; display: block; color: #555; text-decoration: none; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .animate-fade-in { animation: fadeIn 0.6s ease-out forwards; }
+        .animate-slide-up { animation: slideUp 0.7s ease-out forwards; }
+        .delay-100 { animation-delay: 100ms; }
+        .delay-200 { animation-delay: 200ms; }
+
+        .opacity-0 { opacity: 0; }
+
+        /* Efecto de glow sutil en el botón */
+        .btn-glow:hover {
+            box-shadow: 0 0 20px rgba(135, 211, 124, 0.3);
+        }
     </style>
 </head>
-<body>
+<body class="min-h-screen bg-background text-foreground font-sans flex items-center justify-center px-4">
 
-<h2>Ingresar a mi Cuenta</h2>
+<!-- Fondo decorativo con gradiente sutil -->
+<div class="fixed inset-0 pointer-events-none">
+    <div class="absolute top-0 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl"></div>
+</div>
 
-<form id="loginForm">
-    <div class="form-group">
-        <label>Correo Electrónico</label>
-        <input type="email" name="correo" placeholder="ejemplo@correo.com" required />
+<!-- Card de Login -->
+<div class="w-full max-w-md relative z-10 animate-slide-up opacity-0">
+
+    <!-- Logo / Header -->
+    <div class="text-center mb-8 animate-fade-in opacity-0">
+        <div class="inline-flex items-center justify-center p-3 bg-primary/10 rounded-xl mb-4">
+            <i data-lucide="wand-2" class="w-8 h-8 text-primary"></i>
+        </div>
+        <h1 class="text-3xl font-bold tracking-tight text-foreground">Te-ma</h1>
+        <p class="text-muted-foreground mt-2 text-sm">Optimización de CV con IA</p>
     </div>
-    <div class="form-group">
-        <label>Contraseña</label>
-        <input type="password" name="clave" placeholder="••••••••" required />
-    </div>
-    <button type="submit">Iniciar Sesión</button>
-</form>
 
-<a th:href="@{/vistas/registro-usuario}" class="register-link">¿No tienes cuenta? Regístrate aquí</a>
+    <!-- Formulario -->
+    <div class="bg-secondary p-8 rounded-2xl border border-border shadow-xl animate-slide-up delay-100 opacity-0">
+        <h2 class="text-xl font-bold text-foreground mb-6 text-center">Ingresar a mi Cuenta</h2>
+
+        <form id="loginForm" class="space-y-5">
+
+            <!-- Correo -->
+            <div>
+                <label class="block text-sm font-medium text-muted-foreground mb-2">
+                    Correo Electrónico
+                </label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i data-lucide="mail" class="w-4 h-4 text-muted-foreground"></i>
+                    </div>
+                    <input
+                            type="email"
+                            name="correo"
+                            placeholder="ejemplo@correo.com"
+                            required
+                            class="w-full pl-10 pr-4 py-3 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-sm"
+                    />
+                </div>
+            </div>
+
+            <!-- Contraseña -->
+            <div>
+                <label class="block text-sm font-medium text-muted-foreground mb-2">
+                    Contraseña
+                </label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i data-lucide="lock" class="w-4 h-4 text-muted-foreground"></i>
+                    </div>
+                    <input
+                            type="password"
+                            name="clave"
+                            placeholder="••••••••"
+                            required
+                            class="w-full pl-10 pr-4 py-3 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-sm"
+                    />
+                </div>
+            </div>
+
+            <!-- Botón -->
+            <button
+                    type="submit"
+                    class="w-full py-3 bg-primary text-primary-foreground font-bold rounded-lg transition-all hover:bg-primary/90 btn-glow flex items-center justify-center gap-2"
+            >
+                <i data-lucide="log-in" class="w-4 h-4"></i>
+                Iniciar Sesión
+            </button>
+        </form>
+
+        <!-- Separador -->
+        <div class="relative my-6">
+            <div class="absolute inset-0 flex items-center">
+                <div class="w-full border-t border-border"></div>
+            </div>
+            <div class="relative flex justify-center text-xs">
+                <span class="px-2 bg-secondary text-muted-foreground">o</span>
+            </div>
+        </div>
+
+        <!-- Link de registro -->
+        <a
+                th:href="@{/vistas/registro-usuario}"
+                class="block text-center text-sm text-muted-foreground hover:text-primary transition-colors"
+        >
+            ¿No tienes cuenta? <span class="font-semibold text-primary">Regístrate aquí</span>
+        </a>
+    </div>
+
+    <!-- Footer -->
+    <p class="text-center text-xs text-muted-foreground mt-8 animate-fade-in delay-200 opacity-0">
+        © 2026 Te-ma. Todos los derechos reservados.
+    </p>
+</div>
 
 <script>
+    lucide.createIcons();
+
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
         e.preventDefault();
 
@@ -44,10 +168,22 @@
         });
 
         if (response.ok) {
-            // ✨ Redirección corregida hacia el nuevo Index/Panel de usuario
             window.location.href = '/vistas/index';
         } else {
-            alert("Credenciales incorrectas. Inténtalo de nuevo.");
+            // Alerta estilizada en lugar de alert() nativo
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i data-lucide="alert-circle" class="w-4 h-4"></i> Credenciales incorrectas';
+            btn.classList.remove('bg-primary');
+            btn.classList.add('bg-red-500');
+            lucide.createIcons();
+
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.classList.remove('bg-red-500');
+                btn.classList.add('bg-primary');
+                lucide.createIcons();
+            }, 2000);
         }
     });
 </script>

@@ -2,177 +2,164 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Seleccionar Categoría - NovaTech CV</title>
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f4f6f8;
-      margin: 0;
-      padding: 0;
-    }
-    .container {
-      max-width: 700px;
-      margin: 40px auto;
-      padding: 0 20px;
-    }
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 30px;
-    }
-    .header h2 {
-      margin: 0;
-      color: #1a1a2e;
-      font-size: 24px;
-    }
-    .header a {
-      color: #4f46e5;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 14px;
-    }
-    .header a:hover { text-decoration: underline; }
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Te-ma | Adaptar Currículum</title>
 
-    .card {
-      background: white;
-      border-radius: 12px;
-      padding: 30px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-      border: 1px solid #e5e7eb;
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            border: "#333333",
+            background: "#1A1A1A",
+            foreground: "#F2F2F2",
+            primary: {
+              DEFAULT: "#87D37C",
+              foreground: "#1A1A1A",
+            },
+            secondary: {
+              DEFAULT: "#333333",
+              foreground: "#A0A0A0",
+            },
+            muted: {
+              DEFAULT: "#333333",
+              foreground: "#A0A0A0",
+            },
+          },
+        }
+      }
     }
-    .card h3 {
-      margin-top: 0;
-      color: #374151;
-      font-size: 18px;
-    }
-    .info-box {
-      background: #eef2ff;
-      border-left: 4px solid #4f46e5;
-      padding: 15px;
-      border-radius: 6px;
-      margin-bottom: 25px;
-      color: #3730a3;
-      font-size: 14px;
-    }
-    .error-box {
-      background: #fee2e2;
-      border-left: 4px solid #dc2626;
-      padding: 15px;
-      border-radius: 6px;
-      margin-bottom: 20px;
-      color: #991b1b;
-      font-size: 14px;
-    }
-    .form-group {
-      margin-bottom: 20px;
-    }
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 600;
-      color: #374151;
-      font-size: 14px;
-    }
+  </script>
+
+  <style>
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+    .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+    .animate-slide-up { animation: slideUp 0.5s ease-out forwards; }
+    .delay-100 { animation-delay: 100ms; }
+    .delay-200 { animation-delay: 200ms; }
+    .opacity-0 { opacity: 0; }
+
+    /* Flecha custom para el select */
     select {
-      width: 100%;
-      padding: 12px 14px;
-      border: 1px solid #d1d5db;
-      border-radius: 8px;
-      font-size: 15px;
-      background-color: white;
-      color: #1f2937;
-      cursor: pointer;
-      transition: border-color 0.2s;
-    }
-    select:focus {
-      outline: none;
-      border-color: #4f46e5;
-      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-    }
-    .btn {
-      width: 100%;
-      padding: 14px;
-      background-color: #4f46e5;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-    .btn:hover { background-color: #4338ca; }
-    .cv-preview {
-      background: #f9fafb;
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
-      padding: 15px;
-      margin-bottom: 25px;
-    }
-    .cv-preview h4 {
-      margin: 0 0 8px 0;
-      color: #6b7280;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    .cv-preview p {
-      margin: 0;
-      color: #1f2937;
-      font-weight: 600;
-      font-size: 16px;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23A0A0A0' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+      background-position: right 0.8rem center;
+      background-repeat: no-repeat;
+      background-size: 1.2em 1.2em;
     }
   </style>
 </head>
-<body>
+<body class="min-h-screen bg-background text-foreground font-sans flex items-center justify-center px-4 py-8">
 
-<div class="container">
-  <div class="header">
-    <h2>🎯 Adaptar Currículum</h2>
-    <a th:href="@{/vistas/index}">← Volver al Inicio</a>
+<!-- Fondo decorativo -->
+<div class="fixed inset-0 pointer-events-none">
+  <div class="absolute top-0 left-1/3 w-96 h-96 bg-primary/5 rounded-full blur-3xl"></div>
+  <div class="absolute bottom-0 right-1/3 w-96 h-96 bg-primary/5 rounded-full blur-3xl"></div>
+</div>
+
+<!-- Contenedor principal -->
+<div class="w-full max-w-lg relative z-10 animate-fade-in">
+
+  <!-- Header -->
+  <div class="text-center mb-6">
+    <div class="inline-flex items-center justify-center p-3 bg-primary/10 rounded-xl mb-3">
+      <i data-lucide="target" class="w-7 h-7 text-primary"></i>
+    </div>
+    <h1 class="text-3xl font-bold tracking-tight text-foreground">Te-ma</h1>
+    <p class="text-muted-foreground mt-1 text-sm">Optimización de CV con IA</p>
   </div>
 
-  <div class="card">
-    <!-- Info del CV que se va a adaptar -->
-    <div class="cv-preview">
-      <h4>Documento seleccionado</h4>
-      <p th:text="${cv != null and cv.nombreArchivo != null ? cv.nombreArchivo : 'CV sin nombre'}">Nombre del CV</p>
+  <!-- Card -->
+  <div class="bg-secondary p-8 rounded-2xl border border-border shadow-xl animate-slide-up delay-100 opacity-0">
+
+    <!-- Título -->
+    <div class="flex items-center gap-3 mb-6">
+      <h2 class="text-xl font-bold text-foreground">🎯 Adaptar Currículum</h2>
     </div>
 
-    <!-- Mensaje de error si existe -->
-    <div th:if="${error}" class="error-box" th:text="${error}">
-      Error al procesar
+    <!-- Info del CV -->
+    <div class="bg-background p-4 rounded-xl border border-border mb-5">
+      <span class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block mb-1">Documento seleccionado</span>
+      <p class="text-foreground font-semibold text-sm truncate" th:text="${cv != null and cv.nombreArchivo != null ? cv.nombreArchivo : 'CV sin nombre'}">
+        Nombre del CV
+      </p>
     </div>
 
-    <div class="info-box">
+    <!-- Error -->
+    <div th:if="${error}" class="bg-red-500/10 border border-red-500/20 rounded-lg p-4 mb-5 text-red-400 text-sm flex items-start gap-2.5">
+      <i data-lucide="alert-circle" class="w-4 h-4 flex-shrink-0 mt-0.5"></i>
+      <span th:text="${error}">Error al procesar</span>
+    </div>
+
+    <!-- Info box -->
+    <div class="bg-primary/5 border-l-4 border-primary rounded-r-lg p-4 mb-6 text-sm text-foreground/80">
       Seleccioná la categoría de perfil profesional para la que querés adaptar este CV. La IA optimizará el contenido destacando las habilidades y experiencias más relevantes para ese puesto.
     </div>
 
-    <!-- 🔴 IMPORTANTE: el idCvArchivo va DENTRO del form y con th:value seguro -->
-    <form th:action="@{/adaptar-cv}" method="POST">
+    <!-- Formulario -->
+    <form th:action="@{/adaptar-cv}" method="POST" class="space-y-5">
 
       <input type="hidden" name="idCvArchivo"
              th:value="${cv != null and cv.id != null ? cv.id : ''}" />
 
-      <div class="form-group">
-        <label for="categoria">Categoría de Perfil Profesional</label>
-        <select name="categoria" id="categoria" required>
-          <option value="" disabled selected>Seleccioná una categoría...</option>
-
-          <option th:each="cat : ${categorias}"
-                  th:value="${cat}"
-                  th:text="${#strings.replace(cat.name(), '_', ' ')}">
-            CATEGORIA
-          </option>
-        </select>
+      <div>
+        <label for="categoria" class="block text-sm font-medium text-muted-foreground mb-2">
+          Categoría de Perfil Profesional
+        </label>
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <i data-lucide="layers" class="w-4 h-4 text-muted-foreground"></i>
+          </div>
+          <select name="categoria" id="categoria" required
+                  class="w-full pl-10 pr-10 py-3 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-sm cursor-pointer">
+            <option value="" disabled selected>Seleccioná una categoría...</option>
+            <option th:each="cat : ${categorias}"
+                    th:value="${cat}"
+                    th:text="${#strings.replace(cat.name(), '_', ' ')}">
+              CATEGORIA
+            </option>
+          </select>
+        </div>
       </div>
 
-      <button type="submit" class="btn">✨ Generar CV Adaptado</button>
+      <button type="submit"
+              class="w-full py-3.5 bg-primary text-primary-foreground font-bold rounded-lg transition-all hover:bg-primary/90 shadow-lg shadow-primary/10 flex items-center justify-center gap-2">
+        <i data-lucide="sparkles" class="w-4 h-4"></i>
+        Generar CV Adaptado
+      </button>
     </form>
+
+    <!-- Volver -->
+    <div class="relative my-5">
+      <div class="absolute inset-0 flex items-center">
+        <div class="w-full border-t border-border"></div>
+      </div>
+      <div class="relative flex justify-center text-xs">
+        <span class="px-2 bg-secondary text-muted-foreground">o</span>
+      </div>
+    </div>
+
+    <a th:href="@{/vistas/index}"
+       class="block text-center text-sm text-muted-foreground hover:text-primary transition-colors">
+      ← Volver al Inicio
+    </a>
   </div>
+
+  <p class="text-center text-xs text-muted-foreground mt-6 animate-fade-in delay-200 opacity-0">
+    © 2026 Te-ma. Todos los derechos reservados.
+  </p>
 </div>
 
+<script>
+  lucide.createIcons();
+</script>
 </body>
 </html>

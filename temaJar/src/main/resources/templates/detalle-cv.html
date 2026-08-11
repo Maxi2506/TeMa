@@ -3,110 +3,134 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CV Procesado - NovaTech</title>
-  <!-- Tailwind CSS para diseño rápido y moderno -->
+  <title>Te-ma | CV Procesado</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            border: "#333333", background: "#1A1A1A", foreground: "#F2F2F2",
+            primary: { DEFAULT: "#87D37C", foreground: "#1A1A1A" },
+            secondary: { DEFAULT: "#333333", foreground: "#A0A0A0" },
+            muted: { DEFAULT: "#333333", foreground: "#A0A0A0" },
+          },
+        }
+      }
+    }
+  </script>
   <style>
-    /* Estilos específicos para cuando se decida imprimir el documento */
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+    .animate-slide-up { animation: slideUp 0.5s ease-out forwards; }
+    .delay-100 { animation-delay: 100ms; }
+    .delay-200 { animation-delay: 200ms; }
+    .opacity-0 { opacity: 0; }
     @media print {
-        .no-print { display: none !important; }
-        body { background-color: white; color: black; }
-        .print-card { border: none !important; shadow: none !important; }
+      .no-print { display: none !important; }
+      body { background: white !important; color: black !important; }
+      .print-card { border: none !important; box-shadow: none !important; background: white !important; }
     }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans min-h-screen pb-12">
+<body class="bg-background text-foreground font-sans min-h-screen pb-12">
 
-<!-- Barra de Navegación / Header -->
-<header class="bg-white border-b border-slate-200 py-4 px-6 mb-8 no-print shadow-sm">
-  <div class="max-w-5xl mx-auto flex justify-between items-center">
-    <h1 class="text-xl font-bold text-slate-900 tracking-tight">📄 NovaTech <span class="text-indigo-600 font-medium">CV Parser</span></h1>
-    <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm shadow-sm flex items-center gap-2">
-      🖨️ Imprimir Formato Estilizado
-    </button>
+<header class="px-6 h-16 flex items-center justify-between border-b border-border bg-background/80 backdrop-blur-md sticky top-0 z-50 no-print">
+  <div class="flex items-center gap-2">
+    <a th:href="@{/vistas/index}" class="flex items-center justify-center overflow-hidden rounded-lg">
+      <div class="p-1.5 bg-primary rounded-lg text-primary-foreground"><i data-lucide="wand-2" class="w-6 h-6"></i></div>
+    </a>
+    <span class="text-xl font-bold tracking-tight text-primary">Te-ma</span>
   </div>
+  <button onclick="window.print()" class="bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-2 px-4 rounded-lg transition-all text-sm shadow-lg shadow-primary/10 flex items-center gap-2">
+    <i data-lucide="printer" class="w-4 h-4"></i> Imprimir
+  </button>
 </header>
 
-<!-- Contenedor Principal -->
-<main class="max-w-4xl mx-auto px-4">
+<main class="max-w-4xl mx-auto px-4 pt-8 animate-fade-in">
 
-  <!-- Tarjeta de Metadatos del CV -->
-  <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 mb-6 print-card">
-    <div class="flex flex-wrap items-center justify-between gap-4 mb-6 border-b border-slate-100 pb-4">
+  <!-- Metadatos -->
+  <div class="bg-secondary rounded-xl border border-border shadow-sm p-6 mb-6 print-card animate-slide-up delay-100 opacity-0">
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-6 border-b border-border pb-4">
       <div>
-        <span class="text-xs font-semibold text-indigo-600 uppercase tracking-wider">Documento Registrado</span>
-        <h2 class="text-2xl font-bold text-slate-900 mt-1" th:text="${cv.nombreArchivo}">Maximiliano Aveiro IT.pdf</h2>
+        <span class="text-xs font-semibold text-primary uppercase tracking-wider">Documento Registrado</span>
+        <h2 class="text-2xl font-bold text-foreground mt-1" th:text="${cv.nombreArchivo}">Archivo.pdf</h2>
       </div>
       <div class="flex gap-3 text-sm">
-        <div class="bg-slate-100 px-3 py-1.5 rounded-md text-slate-600">
-          <strong>ID Registro:</strong> #<span th:text="${cv.id}">31</span>
+        <div class="bg-background px-3 py-1.5 rounded-md text-muted-foreground border border-border">
+          <strong class="text-foreground">ID:</strong> #<span th:text="${cv.id}">0</span>
         </div>
-        <div class="bg-slate-100 px-3 py-1.5 rounded-md text-slate-600">
-          <strong>Usuario:</strong> ID <span th:text="${cv.idUsuario}">1</span>
+        <div class="bg-background px-3 py-1.5 rounded-md text-muted-foreground border border-border">
+          <strong class="text-foreground">Usuario:</strong> ID <span th:text="${cv.idUsuario}">1</span>
         </div>
       </div>
     </div>
-
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-      <div class="bg-slate-50 p-3 rounded-lg border border-slate-100">
-        <span class="text-slate-500 block">Fecha de Carga</span>
-        <strong class="text-slate-900" th:text="${cv.fechaCarga}">2026-07-15</strong>
+      <div class="bg-background p-3 rounded-lg border border-border">
+        <span class="text-muted-foreground block text-xs mb-1">Fecha de Carga</span>
+        <strong class="text-foreground" th:text="${cv.fechaCarga}">2026-01-01</strong>
       </div>
-      <div class="bg-slate-50 p-3 rounded-lg border border-slate-100">
-        <span class="text-slate-500 block">Estado del Procesamiento</span>
-        <!-- Control de seguridad: Evita errores si el texto extraído es nulo -->
-        <span th:if="${cv.textoExtraido != null && #strings.contains(#strings.toLowerCase(cv.textoExtraido), 'error')}" class="text-red-600 font-semibold flex items-center gap-1">
-            ⚠️ Error en API externa (Ver detalle abajo)
-        </span>
-        <span th:unless="${cv.textoExtraido != null && #strings.contains(#strings.toLowerCase(cv.textoExtraido), 'error')}" class="text-emerald-600 font-semibold flex items-center gap-1">
-            ✅ Procesado Exitosamente
-        </span>
+      <div class="bg-background p-3 rounded-lg border border-border">
+        <span class="text-muted-foreground block text-xs mb-1">Estado</span>
+        <!-- 🔴 FIX: Expresión simple. Solo es error si contiene "401" o "Unauthorized" -->
+        <span th:if="${cv.textoExtraido != null and ( #strings.contains(cv.textoExtraido, '401') or #strings.contains(cv.textoExtraido, 'Unauthorized') )}"
+              class="text-red-400 font-semibold flex items-center gap-1.5">
+            <i data-lucide="alert-triangle" class="w-4 h-4"></i> Error en API
+          </span>
+        <span th:unless="${cv.textoExtraido != null and ( #strings.contains(cv.textoExtraido, '401') or #strings.contains(cv.textoExtraido, 'Unauthorized') )}"
+              class="text-primary font-semibold flex items-center gap-1.5">
+            <i data-lucide="check-circle-2" class="w-4 h-4"></i> Procesado Exitosamente
+          </span>
       </div>
     </div>
   </div>
 
-  <!-- Alerta en caso de API KEY inválida -->
-  <div th:if="${cv.textoExtraido != null && #strings.contains(#strings.toLowerCase(cv.textoExtraido), 'error')}" class="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6 text-amber-800 text-sm flex gap-3 no-print">
-    <span class="text-lg">💡</span>
+  <!-- Alerta de error REAL -->
+  <div th:if="${cv.textoExtraido != null and ( #strings.contains(cv.textoExtraido, '401') or #strings.contains(cv.textoExtraido, 'Unauthorized') )}"
+       class="bg-amber-500/10 border border-amber-500/20 rounded-lg p-4 mb-6 text-amber-400 text-sm flex gap-3 no-print animate-slide-up delay-200 opacity-0">
+    <i data-lucide="lightbulb" class="w-5 h-5 flex-shrink-0 mt-0.5"></i>
     <div>
-      <strong class="block font-semibold mb-1">¡Atención, Maxi! Tu API Key de Gemini falló</strong>
-      El backend guardó la respuesta de error de Google en la base de datos. Una vez que actualices la API Key en tu configuración de Spring Boot, los nuevos archivos cargados mostrarán aquí el texto estructurado del CV en lugar de este reporte técnico.
+      <strong class="block font-semibold mb-1">¡Atención! La API Key de Gemini falló</strong>
+      El backend guardó la respuesta de error. Verificá tu API Key en la configuración de Spring Boot.
     </div>
   </div>
 
-  <!-- Bloque de Texto Extraído / Contenido del CV -->
-  <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 print-card">
-    <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-      📋 Contenido Extraído y Análisis del CV
+  <!-- Contenido -->
+  <div class="bg-secondary rounded-xl border border-border shadow-sm p-6 print-card animate-slide-up delay-200 opacity-0">
+    <h3 class="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
+      <i data-lucide="file-text" class="w-5 h-5 text-primary"></i>
+      Contenido Extraído y Análisis del CV
     </h3>
 
-    <!-- Si es un error, lo mostramos en un formato tipo consola/código para que sea legible -->
-    <div th:if="${cv.textoExtraido != null && #strings.contains(#strings.toLowerCase(cv.textoExtraido), 'error')}" class="bg-slate-900 text-rose-400 font-mono text-xs p-4 rounded-lg overflow-x-auto leading-relaxed shadow-inner">
-      <p class="text-slate-400 mb-2">// Registro de error capturado desde Gemini API:</p>
-      <span th:text="${cv.textoExtraido}">Detalles del error...</span>
+    <!-- Si es error real -->
+    <div th:if="${cv.textoExtraido != null and ( #strings.contains(cv.textoExtraido, '401') or #strings.contains(cv.textoExtraido, 'Unauthorized') )}"
+         class="bg-background text-red-400 font-mono text-xs p-4 rounded-lg overflow-x-auto border border-red-500/20">
+      <p class="text-muted-foreground mb-2">// Error de Gemini API:</p>
+      <span th:text="${cv.textoExtraido}">Error...</span>
     </div>
 
-    <!-- Si el texto es correcto, se muestra en un formato limpio y elegante -->
-    <div th:unless="${cv.textoExtraido != null && #strings.contains(#strings.toLowerCase(cv.textoExtraido), 'error')}" class="whitespace-pre-line text-slate-700 leading-relaxed text-sm bg-slate-50 p-6 rounded-lg border border-slate-100" th:text="${cv.textoExtraido}">
-      Aquí se renderizará el texto que extraiga la inteligencia artificial cuando la API Key esté activa y funcional.
+    <!-- Texto correcto -->
+    <div th:unless="${cv.textoExtraido != null and ( #strings.contains(cv.textoExtraido, '401') or #strings.contains(cv.textoExtraido, 'Unauthorized') )}"
+         class="whitespace-pre-line text-foreground/80 leading-relaxed text-sm bg-background p-6 rounded-lg border border-border"
+         th:text="${cv.textoExtraido}">
+      Contenido...
     </div>
   </div>
 
-  <!-- Dentro de detalle-cv.html, al final del contenido -->
-  <div style="margin-top: 25px; text-align: center;">
-    <a th:href="@{/vistas/seleccion-categoria(id=${cv.id})}"
-       style="display: inline-block; background: #4f46e5; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600;">
-      🎯 Adaptar a una Categoría
+  <!-- Botón adaptar -->
+  <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 no-print animate-slide-up delay-300 opacity-0">
+    <a th:href="@{/vistas/seleccion-categoria(id=${cv.id})}" class="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-3 px-8 rounded-lg transition-all shadow-lg shadow-primary/10 hover:scale-105">
+      <i data-lucide="target" class="w-5 h-5"></i> Adaptar a una Categoría
+    </a>
+    <a th:href="@{/vistas/carga-cv}" class="inline-flex items-center gap-2 bg-secondary hover:bg-secondary/80 text-foreground font-semibold py-3 px-6 rounded-lg transition-all border border-border">
+      <i data-lucide="upload" class="w-4 h-4"></i> Cargar otro CV
     </a>
   </div>
 
-  <!-- Botón de retorno (Oculto al imprimir) -->
-  <div class="mt-6 text-center no-print">
-    <a href="/cargacv" class="text-indigo-600 hover:text-indigo-800 font-medium text-sm transition-colors">
-      ← Cargar otro Curriculum Vitae
-    </a>
-  </div>
 </main>
 
+<script>lucide.createIcons();</script>
 </body>
 </html>
