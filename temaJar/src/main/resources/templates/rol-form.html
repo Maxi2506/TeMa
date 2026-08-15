@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:text="${modo == 'editar'} ? 'Te-ma | Editar Rol' : 'Te-ma | Nuevo Rol'">Te-ma | Rol</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            border: "#333333",
+            background: "#1A1A1A",
+            foreground: "#F2F2F2",
+            primary: { DEFAULT: "#87D37C", foreground: "#1A1A1A" },
+            secondary: { DEFAULT: "#333333", foreground: "#A0A0A0" },
+            muted: { DEFAULT: "#333333", foreground: "#A0A0A0" },
+            admin: { DEFAULT: "#F59E0B", foreground: "#1A1A1A" }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade-in { animation: fadeIn 0.7s ease-out forwards; }
+    .animate-slide-up { animation: slideUp 0.8s ease-out forwards; }
+    .delay-100 { animation-delay: 100ms; }
+    .opacity-0 { opacity: 0; }
+  </style>
+</head>
+<body class="flex flex-col min-h-screen bg-background text-foreground font-sans">
+
+<!-- Header -->
+<header class="px-6 h-16 flex items-center justify-between border-b border-border backdrop-blur-md sticky top-0 z-50 bg-background/80">
+  <div class="flex items-center gap-2">
+    <div class="p-1.5 bg-primary rounded-lg text-primary-foreground">
+      <i data-lucide="wand-2" class="w-6 h-6"></i>
+    </div>
+    <span class="text-xl font-bold tracking-tight text-primary">Te-ma</span>
+  </div>
+  <nav class="flex items-center gap-6">
+    <span class="hidden sm:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-admin/20 text-admin border border-admin/30">
+      <i data-lucide="shield-check" class="w-3 h-3"></i> Administrador
+    </span>
+    <a th:href="@{/vistas/roles}" class="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
+      <i data-lucide="arrow-left" class="w-4 h-4"></i> Volver a roles
+    </a>
+  </nav>
+</header>
+
+<main class="flex-1 px-6 py-12 max-w-2xl mx-auto">
+
+  <div class="animate-fade-in">
+    <div class="inline-flex items-center gap-2 mb-3 px-3 py-1 bg-admin/10 text-admin rounded-full text-xs font-semibold tracking-wide uppercase border border-admin/20">
+      <i data-lucide="briefcase" class="w-3 h-3"></i>
+      <span th:text="${modo == 'editar'} ? 'Editar' : 'Nuevo'">Nuevo</span>
+    </div>
+    <h1 class="text-3xl font-extrabold tracking-tight text-foreground mb-2"
+        th:text="${modo == 'editar'} ? 'Editar Rol' : 'Crear Rol para CV'">Crear Rol</h1>
+    <p class="text-muted-foreground"
+       th:text="${modo == 'editar'} ? 'Modificá los datos del rol seleccionado.' : 'Definí una nueva categoría profesional para adaptar currículums.'">
+      Descripción...
+    </p>
+  </div>
+
+  <!-- Formulario -->
+  <form th:action="@{/vistas/roles/guardar}" th:object="${rol}" method="post" class="mt-8 space-y-6 animate-slide-up delay-100 opacity-0">
+
+    <!-- ID oculto para edición -->
+    <input type="hidden" name="id" th:if="${modo == 'editar'}" th:value="*{id}">
+
+    <!-- Nombre -->
+    <div>
+      <label for="nombre" class="block text-sm font-medium text-foreground mb-2">Nombre del Rol <span class="text-red-400">*</span></label>
+      <div class="relative">
+        <i data-lucide="briefcase" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground"></i>
+        <input type="text" id="nombre" th:field="*{nombre}" required placeholder="Ej: Desarrollador Web Full Stack"
+               class="w-full h-11 pl-10 pr-4 rounded-md bg-background border border-border text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors">
+      </div>
+    </div>
+
+    <!-- Categoría -->
+    <div>
+      <label for="categoria" class="block text-sm font-medium text-foreground mb-2">Categoría <span class="text-red-400">*</span></label>
+      <div class="relative">
+        <i data-lucide="folder" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground"></i>
+        <select id="categoria" th:field="*{categoria}" required
+                class="w-full h-11 pl-10 pr-10 rounded-md bg-background border border-border text-foreground text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors appearance-none cursor-pointer">
+          <option value="" disabled>Seleccioná una categoría</option>
+          <option th:each="cat : ${categorias}" th:value="${cat}" th:text="${cat}">CATEGORIA</option>
+        </select>
+        <i data-lucide="chevron-down" class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none"></i>
+      </div>
+    </div>
+
+    <!-- Nivel -->
+    <div>
+      <label for="nivel" class="block text-sm font-medium text-foreground mb-2">Nivel de Experiencia <span class="text-red-400">*</span></label>
+      <div class="relative">
+        <i data-lucide="bar-chart-2" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground"></i>
+        <select id="nivel" th:field="*{nivel}" required
+                class="w-full h-11 pl-10 pr-10 rounded-md bg-background border border-border text-foreground text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors appearance-none cursor-pointer">
+          <option value="" disabled>Seleccioná un nivel</option>
+          <option th:each="niv : ${niveles}" th:value="${niv}" th:text="${niv}">NIVEL</option>
+        </select>
+        <i data-lucide="chevron-down" class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none"></i>
+      </div>
+    </div>
+
+    <!-- Botones -->
+    <div class="flex items-center gap-3 pt-4">
+      <button type="submit" class="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-admin px-6 text-sm font-bold text-admin-foreground shadow-lg transition-all hover:bg-admin/90 hover:shadow-admin/20 hover:scale-105">
+        <i data-lucide="save" class="w-4 h-4"></i>
+        <span th:text="${modo == 'editar'} ? 'Guardar Cambios' : 'Guardar Rol'">Guardar</span>
+      </button>
+      <a th:href="@{/vistas/roles}" class="inline-flex h-11 items-center justify-center rounded-md border border-border px-6 text-sm font-semibold text-muted-foreground hover:bg-secondary hover:text-foreground transition-all">
+        Cancelar
+      </a>
+    </div>
+
+  </form>
+
+</main>
+
+<footer class="py-8 px-6 border-t border-border bg-background mt-auto">
+  <div class="max-w-6xl mx-auto text-center">
+    <p class="text-sm text-muted-foreground">© 2026 Te-ma. Todos los derechos reservados.</p>
+  </div>
+</footer>
+
+<script>lucide.createIcons();</script>
+</body>
+</html>

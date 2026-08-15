@@ -24,6 +24,9 @@ public class Puesto {
     @Enumerated(EnumType.STRING)
     private NivelDeExperiencia nivel;
 
+    @Column(nullable = false)
+    private boolean activo = true;
+
     public Puesto() {
     }
 
@@ -33,6 +36,9 @@ public class Puesto {
         this.categoria = categoria;
         this.nivel = nivel;
     }
+
+    public boolean isActivo() { return activo; }
+    public void setActivo(boolean activo) { this.activo = activo; }
 
     public Long getId() {
         return id;

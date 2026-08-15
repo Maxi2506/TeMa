@@ -44,6 +44,7 @@ public class UsuarioServicio implements UserDetailsService {
     @Transactional(readOnly = true)
     public List<UsuarioDTO> obtenerTodo() {
         return usuarioRepository.findAll().stream()
+                .filter(Usuario::isActivo)
                 .map(this::convertirADTO)
                 .collect(Collectors.toList());
     }
@@ -66,8 +67,8 @@ public class UsuarioServicio implements UserDetailsService {
         usuario.setDomicilio(dto.getDomicilio());
         usuario.setClave(passwordEncoder.encode(dto.getClave()));
         usuario.setRol(Rol.USUARIO);
+        usuario.setActivo(true);  // ← CORRECCIÓN: inicializar como activo
 
-        // 1. Buscamos los objetos geográficos
         Pais p = paisRepository.findByNombre(dto.getPais())
                 .orElseThrow(() -> new RuntimeException("País no encontrado: " + dto.getPais()));
 
@@ -77,7 +78,6 @@ public class UsuarioServicio implements UserDetailsService {
         Localidad loc = localidadRepository.findByNombre(dto.getLocalidad())
                 .orElseThrow(() -> new RuntimeException("Localidad no encontrada: " + dto.getLocalidad()));
 
-        // 2. ASIGNACIÓN EXPLÍCITA (Crucial para que no vuelvan null)
         usuario.setPais(p);
         usuario.setProvincia(prov);
         usuario.setLocalidad(loc);
@@ -104,7 +104,6 @@ public class UsuarioServicio implements UserDetailsService {
                 usuario.setClave(passwordEncoder.encode(dto.getClave()));
             }
 
-            // Actualización de relaciones geográficas
             if (dto.getPais() != null) {
                 usuario.setPais(paisRepository.findByNombre(dto.getPais())
                         .orElse(usuario.getPais()));
@@ -125,11 +124,11 @@ public class UsuarioServicio implements UserDetailsService {
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
     public boolean eliminar(Long id) {
-        if (usuarioRepository.existsById(id)) {
-            usuarioRepository.deleteById(id);
+        return usuarioRepository.findById(id).map(u -> {
+            u.setActivo(false);
+            usuarioRepository.save(u);
             return true;
-        }
-        return false;
+        }).orElse(false);
     }
 
     private UsuarioDTO convertirADTO(Usuario usuario) {
@@ -143,7 +142,6 @@ public class UsuarioServicio implements UserDetailsService {
         dto.setDomicilio(usuario.getDomicilio());
         dto.setRol(usuario.getRol().toString());
 
-        // Mapeamos los nombres desde los objetos relacionados
         if (usuario.getPais() != null) dto.setPais(usuario.getPais().getNombre());
         if (usuario.getProvincia() != null) dto.setProvincia(usuario.getProvincia().getNombre());
         if (usuario.getLocalidad() != null) dto.setLocalidad(usuario.getLocalidad().getNombre());
@@ -153,17 +151,21 @@ public class UsuarioServicio implements UserDetailsService {
 
     @Transactional(readOnly = true)
     public UsuarioDTO login(String correo, String clavePlana) {
-        // 1. Buscamos el usuario por su correo
         Usuario usuario = usuarioRepository.findByCorreo(correo)
                 .orElseThrow(() -> new RuntimeException("El correo ingresado no está registrado."));
 
-        // 2. ⚠️ CRUCIAL: Comparamos usando el PasswordEncoder de Spring Security
         if (!passwordEncoder.matches(clavePlana, usuario.getClave())) {
             throw new RuntimeException("La contraseña ingresada es incorrecta.");
         }
 
-        // 3. Si coincide, retornamos sus datos convertidos en DTO
         return convertirADTO(usuario);
+    }
+
+    @Transactional(readOnly = true)
+    public List<UsuarioDTO> obtenerTodoSinFiltro() {
+        return usuarioRepository.findAll().stream()
+                .map(this::convertirADTO)
+                .collect(Collectors.toList());
     }
 
 }

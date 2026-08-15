@@ -63,4 +63,10 @@ public class UsuarioController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
     }
+
+    @GetMapping("/debug/todos")
+    public List<UsuarioDTO> getAllDebug() {
+        return usuarioServicio.obtenerTodoSinFiltro();
+    }
+
 }

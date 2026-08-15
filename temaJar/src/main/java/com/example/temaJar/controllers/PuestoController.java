@@ -49,4 +49,9 @@ public class PuestoController {
         }
     }
 
+    @GetMapping("/debug/todos")
+    public List<Puesto> getAllDebug() {
+        return puestoServicio.obtenerTodoSinFiltro();
+    }
+
 }

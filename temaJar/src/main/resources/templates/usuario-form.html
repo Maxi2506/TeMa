@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Te-ma | Editar Usuario</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            border: "#333333",
+            background: "#1A1A1A",
+            foreground: "#F2F2F2",
+            primary: { DEFAULT: "#87D37C", foreground: "#1A1A1A" },
+            secondary: { DEFAULT: "#333333", foreground: "#A0A0A0" },
+            muted: { DEFAULT: "#333333", foreground: "#A0A0A0" },
+            admin: { DEFAULT: "#F59E0B", foreground: "#1A1A1A" }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade-in { animation: fadeIn 0.7s ease-out forwards; }
+    .animate-slide-up { animation: slideUp 0.8s ease-out forwards; }
+    .delay-100 { animation-delay: 100ms; }
+    .opacity-0 { opacity: 0; }
+  </style>
+</head>
+<body class="flex flex-col min-h-screen bg-background text-foreground font-sans">
+
+<!-- Header -->
+<header class="px-6 h-16 flex items-center justify-between border-b border-border backdrop-blur-md sticky top-0 z-50 bg-background/80">
+  <div class="flex items-center gap-2">
+    <div class="p-1.5 bg-primary rounded-lg text-primary-foreground">
+      <i data-lucide="wand-2" class="w-6 h-6"></i>
+    </div>
+    <span class="text-xl font-bold tracking-tight text-primary">Te-ma</span>
+  </div>
+  <nav class="flex items-center gap-6">
+    <span class="hidden sm:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-admin/20 text-admin border border-admin/30">
+      <i data-lucide="shield-check" class="w-3 h-3"></i> Administrador
+    </span>
+    <a th:href="@{/vistas/usuarios}" class="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
+      <i data-lucide="arrow-left" class="w-4 h-4"></i> Volver a usuarios
+    </a>
+    <a th:href="@{/vistas/login}" class="text-sm font-medium text-red-400 hover:text-red-300 transition-colors flex items-center gap-1">
+      <i data-lucide="log-out" class="w-4 h-4"></i> Cerrar Sesión
+    </a>
+  </nav>
+</header>
+
+<main class="flex-1 px-6 py-12 max-w-2xl mx-auto">
+
+  <div class="animate-fade-in">
+    <div class="inline-flex items-center gap-2 mb-3 px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-semibold tracking-wide uppercase border border-primary/20">
+      <i data-lucide="pencil" class="w-3 h-3"></i> Edición
+    </div>
+    <h1 class="text-3xl font-extrabold tracking-tight text-foreground mb-2">Editar Usuario</h1>
+    <p class="text-muted-foreground">Modificá los datos del usuario. Dejá la contraseña en blanco para no cambiarla.</p>
+  </div>
+
+  <!-- Formulario -->
+  <form th:action="@{/vistas/usuarios/guardar}" th:object="${usuarioEditar}" method="post" class="mt-8 space-y-6 animate-slide-up delay-100 opacity-0">
+
+    <input type="hidden" name="id" th:value="${usuarioEditar.id}">
+
+    <!-- Nombre + Apellido -->
+    <div class="grid md:grid-cols-2 gap-4">
+      <div>
+        <label for="nombre" class="block text-sm font-medium text-foreground mb-2">Nombre</label>
+        <input type="text" id="nombre" th:field="*{nombre}" required
+               class="w-full h-11 px-4 rounded-md bg-background border border-border text-foreground text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors">
+      </div>
+      <div>
+        <label for="apellido" class="block text-sm font-medium text-foreground mb-2">Apellido</label>
+        <input type="text" id="apellido" th:field="*{apellido}" required
+               class="w-full h-11 px-4 rounded-md bg-background border border-border text-foreground text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors">
+      </div>
+    </div>
+
+    <!-- Correo -->
+    <div>
+      <label for="correo" class="block text-sm font-medium text-foreground mb-2">Correo Electrónico</label>
+      <input type="email" id="correo" th:field="*{correo}" required
+             class="w-full h-11 px-4 rounded-md bg-background border border-border text-foreground text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors">
+    </div>
+
+    <!-- Teléfono + Edad -->
+    <div class="grid md:grid-cols-2 gap-4">
+      <div>
+        <label for="telefono" class="block text-sm font-medium text-foreground mb-2">Teléfono</label>
+        <input type="number" id="telefono" th:field="*{telefono}"
+               class="w-full h-11 px-4 rounded-md bg-background border border-border text-foreground text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors">
+      </div>
+      <div>
+        <label for="edad" class="block text-sm font-medium text-foreground mb-2">Edad</label>
+        <input type="number" id="edad" th:field="*{edad}"
+               class="w-full h-11 px-4 rounded-md bg-background border border-border text-foreground text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors">
+      </div>
+    </div>
+
+    <!-- Domicilio -->
+    <div>
+      <label for="domicilio" class="block text-sm font-medium text-foreground mb-2">Domicilio</label>
+      <input type="text" id="domicilio" th:field="*{domicilio}"
+             class="w-full h-11 px-4 rounded-md bg-background border border-border text-foreground text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors">
+    </div>
+
+    <!-- Contraseña (opcional) -->
+    <div>
+      <label for="clave" class="block text-sm font-medium text-foreground mb-2">Nueva Contraseña</label>
+      <input type="password" id="clave" th:field="*{clave}" placeholder="Dejá en blanco para mantener la actual"
+             class="w-full h-11 px-4 rounded-md bg-background border border-border text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors">
+      <p class="text-xs text-muted-foreground mt-1">Solo completá este campo si querés cambiar la contraseña.</p>
+    </div>
+
+    <!-- Ubicación (solo lectura) -->
+    <div class="grid md:grid-cols-3 gap-4">
+      <div>
+        <label class="block text-sm font-medium text-muted-foreground mb-2">País</label>
+        <input type="text" th:field="*{pais}" readonly
+               class="w-full h-11 px-4 rounded-md bg-background/50 border border-border text-muted-foreground text-sm cursor-not-allowed">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-muted-foreground mb-2">Provincia</label>
+        <input type="text" th:field="*{provincia}" readonly
+               class="w-full h-11 px-4 rounded-md bg-background/50 border border-border text-muted-foreground text-sm cursor-not-allowed">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-muted-foreground mb-2">Localidad</label>
+        <input type="text" th:field="*{localidad}" readonly
+               class="w-full h-11 px-4 rounded-md bg-background/50 border border-border text-muted-foreground text-sm cursor-not-allowed">
+      </div>
+    </div>
+
+    <!-- Botones -->
+    <div class="flex items-center gap-3 pt-4">
+      <button type="submit" class="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-primary px-6 text-sm font-bold text-primary-foreground shadow-lg transition-all hover:bg-primary/90 hover:shadow-primary/20 hover:scale-105">
+        <i data-lucide="save" class="w-4 h-4"></i>
+        Guardar Cambios
+      </button>
+      <a th:href="@{/vistas/usuarios}" class="inline-flex h-11 items-center justify-center rounded-md border border-border px-6 text-sm font-semibold text-muted-foreground hover:bg-secondary hover:text-foreground transition-all">
+        Cancelar
+      </a>
+    </div>
+
+  </form>
+
+</main>
+
+<footer class="py-8 px-6 border-t border-border bg-background mt-auto">
+  <div class="max-w-6xl mx-auto text-center">
+    <p class="text-sm text-muted-foreground">© 2026 Te-ma. Todos los derechos reservados.</p>
+  </div>
+</footer>
+
+<script>lucide.createIcons();</script>
+</body>
+</html>

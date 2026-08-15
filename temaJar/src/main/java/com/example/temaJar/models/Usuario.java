@@ -50,6 +50,9 @@ public class Usuario {
     @JoinColumn(name = "id_pais")
     private Pais pais;
 
+    @Column(nullable = false)
+    private boolean activo = true;
+
     public Usuario() {
     }
 
@@ -67,6 +70,9 @@ public class Usuario {
         this.provincia = provincia;
         this.pais = pais;
     }
+
+    public boolean isActivo() { return activo; }
+    public void setActivo(boolean activo) { this.activo = activo; }
 
     public Long getId() {
         return id;

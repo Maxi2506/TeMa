@@ -20,7 +20,9 @@ public class PuestoServicio {
 
     @Transactional(readOnly = true)
     public List<Puesto> obtenerTodo() {
-        return puestoRepository.findAll();
+        return puestoRepository.findAll().stream()
+                .filter(Puesto::isActivo)
+                .toList();
     }
 
     @Transactional(readOnly = true)
@@ -35,7 +37,6 @@ public class PuestoServicio {
 
     @Transactional(readOnly = true)
     public List<Puesto> obtenerPorCategoria(String categoria) {
-        // Convertimos el string de la URL a formato Enum
         String catLimpia = categoria.replace(" ", "_").toUpperCase();
         return puestoRepository.findByCategoria(catLimpia);
     }
@@ -44,8 +45,8 @@ public class PuestoServicio {
     public Puesto crear(PuestoDTO dto) {
         Puesto puesto = new Puesto();
         puesto.setNombre(dto.getNombre());
+        puesto.setActivo(true);  // ← CORRECCIÓN: inicializar como activo
 
-        // Transformación de String a Enum (con soporte para espacios)
         if (dto.getCategoria() != null) {
             puesto.setCategoria(Categoria.valueOf(dto.getCategoria().replace(" ", "_").toUpperCase()));
         }
@@ -69,19 +70,25 @@ public class PuestoServicio {
             }
 
             return puestoRepository.save(puesto);
-        }).orElse(null);
+        }).orElseThrow(() -> new RuntimeException("No se encontró el puesto con ID: " + id));  // ← Unificado con UsuarioServicio
     }
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
     public boolean eliminar(Long id) {
-        if (puestoRepository.existsById(id)) {
-            puestoRepository.deleteById(id);
+        return puestoRepository.findById(id).map(p -> {
+            p.setActivo(false);
+            puestoRepository.save(p);
             return true;
-        }
-        return false;
+        }).orElse(false);
     }
 
     public long contar() {
         return puestoRepository.count();
     }
+
+    @Transactional(readOnly = true)
+    public List<Puesto> obtenerTodoSinFiltro() {
+        return puestoRepository.findAll();
+    }
+
 }

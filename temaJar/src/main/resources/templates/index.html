@@ -5,10 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Te-ma | Panel de Usuario</title>
 
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <script>
@@ -19,19 +16,12 @@
             border: "#333333",
             background: "#1A1A1A",
             foreground: "#F2F2F2",
-            primary: {
-              DEFAULT: "#87D37C",
-              foreground: "#1A1A1A",
-            },
-            secondary: {
-              DEFAULT: "#333333",
-              foreground: "#A0A0A0",
-            },
-            muted: {
-              DEFAULT: "#333333",
-              foreground: "#A0A0A0",
-            },
-          },
+            primary: { DEFAULT: "#87D37C", foreground: "#1A1A1A" },
+            secondary: { DEFAULT: "#333333", foreground: "#A0A0A0" },
+            muted: { DEFAULT: "#333333", foreground: "#A0A0A0" },
+            danger: { DEFAULT: "#EF4444", foreground: "#FFFFFF" },
+            admin: { DEFAULT: "#F59E0B", foreground: "#1A1A1A" }
+          }
         }
       }
     }
@@ -40,13 +30,13 @@
   <style>
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
     .animate-fade-in { animation: fadeIn 0.7s ease-out forwards; }
     .animate-slide-up { animation: slideUp 0.8s ease-out forwards; }
     .delay-100 { animation-delay: 100ms; }
     .delay-200 { animation-delay: 200ms; }
     .delay-300 { animation-delay: 300ms; }
-
+    .delay-400 { animation-delay: 400ms; }
+    .delay-500 { animation-delay: 500ms; }
     html { scroll-behavior: smooth; }
     .opacity-0 { opacity: 0; }
   </style>
@@ -64,9 +54,15 @@
     <span class="text-xl font-bold tracking-tight text-primary">Te-ma</span>
   </div>
   <nav class="flex items-center gap-6">
-      <span class="text-sm text-muted-foreground hidden sm:inline">
-        Hola, <span th:text="${usuario.nombre}" class="text-foreground font-medium">Usuario</span>
-      </span>
+    <!-- Badge de rol admin -->
+    <span th:if="${usuario.rol != null and usuario.rol.toString() == 'ADMIN'}" class="hidden sm:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-admin/20 text-admin border border-admin/30">
+      <i data-lucide="shield-check" class="w-3 h-3"></i>
+      Administrador
+    </span>
+
+    <span class="text-sm text-muted-foreground hidden sm:inline">
+      Hola, <span th:text="${usuario.nombre}" class="text-foreground font-medium">Usuario</span>
+    </span>
     <a th:href="@{/vistas/login}" class="text-sm font-medium text-red-400 hover:text-red-300 transition-colors flex items-center gap-1">
       <i data-lucide="log-out" class="w-4 h-4"></i>
       Cerrar Sesión
@@ -77,7 +73,7 @@
 <main class="flex-1">
 
   <!-- Hero / Bienvenida -->
-  <section class="py-16 px-6 max-w-5xl mx-auto text-center">
+  <section class="py-16 px-6 max-w-6xl mx-auto text-center">
     <div class="animate-fade-in inline-block mb-4 px-3 py-1 bg-secondary text-primary rounded-full text-xs font-semibold tracking-wide uppercase border border-primary/20">
       Panel de Control
     </div>
@@ -88,13 +84,95 @@
 
     <p class="animate-slide-up delay-200 text-lg text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed opacity-0">
       Bienvenido a tu panel de control para la optimización de tu currículum con IA.
-      Sube tu CV base para que nuestro modelo analice tus habilidades y optimice tu presentación.
+      <span th:if="${usuario.rol != null and usuario.rol.toString() == 'ADMIN'}">Como administrador, tenés acceso a la gestión completa de la plataforma.</span>
+      <span th:unless="${usuario.rol != null and usuario.rol.toString() == 'ADMIN'}">Subí tu CV base para que nuestro modelo analice tus habilidades y optimice tu presentación.</span>
     </p>
   </section>
 
-  <!-- Datos del Usuario -->
-  <section class="px-6 max-w-5xl mx-auto pb-12">
-    <div class="grid md:grid-cols-2 gap-6 animate-slide-up delay-300 opacity-0">
+  <!-- ═══════════════════════════════════════ -->
+  <!-- SECCIONES SOLO PARA ADMINISTRADORES   -->
+  <!-- ═══════════════════════════════════════ -->
+  <section th:if="${usuario.rol != null and usuario.rol.toString() == 'ADMIN'}"
+           class="px-6 max-w-6xl mx-auto pb-12 animate-slide-up delay-300 opacity-0">
+
+    <div class="flex items-center gap-3 mb-6">
+      <div class="p-2 bg-admin/10 rounded-lg">
+        <i data-lucide="shield" class="w-5 h-5 text-admin"></i>
+      </div>
+      <h2 class="text-2xl font-bold text-foreground">Panel de Administración</h2>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6">
+
+      <!-- Card: Gestión de Roles -->
+      <div class="bg-secondary p-6 rounded-xl border border-border hover:border-admin/40 transition-all group">
+        <div class="flex items-center justify-between mb-4">
+          <div class="p-2.5 bg-admin/10 rounded-lg group-hover:bg-admin/20 transition-colors">
+            <i data-lucide="tags" class="w-6 h-6 text-admin"></i>
+          </div>
+          <span class="text-xs font-semibold text-admin bg-admin/10 px-2 py-1 rounded-md">Gestión</span>
+        </div>
+        <h3 class="text-lg font-bold text-foreground mb-2">Roles para CV</h3>
+        <p class="text-muted-foreground text-sm mb-6 leading-relaxed">
+          Visualizá los roles existentes para adaptar CVs y agregá nuevas categorías profesionales.
+        </p>
+        <div class="flex flex-col gap-2">
+          <a th:href="@{/vistas/roles}" class="inline-flex items-center justify-center gap-2 w-full h-10 rounded-md bg-admin/10 text-admin font-semibold text-sm hover:bg-admin/20 transition-all border border-admin/20">
+            <i data-lucide="eye" class="w-4 h-4"></i>
+            Ver roles existentes
+          </a>
+          <a th:href="@{/vistas/roles/nuevo}" class="inline-flex items-center justify-center gap-2 w-full h-10 rounded-md bg-admin text-admin-foreground font-semibold text-sm hover:bg-admin/90 transition-all shadow-lg hover:shadow-admin/20">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+            Agregar nuevo rol
+          </a>
+        </div>
+      </div>
+
+      <!-- Card: Gestión de Usuarios -->
+      <div class="bg-secondary p-6 rounded-xl border border-border hover:border-primary/40 transition-all group">
+        <div class="flex items-center justify-between mb-4">
+          <div class="p-2.5 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-colors">
+            <i data-lucide="users" class="w-6 h-6 text-primary"></i>
+          </div>
+          <span class="text-xs font-semibold text-primary bg-primary/10 px-2 py-1 rounded-md">Usuarios</span>
+        </div>
+        <h3 class="text-lg font-bold text-foreground mb-2">Usuarios Registrados</h3>
+        <p class="text-muted-foreground text-sm mb-6 leading-relaxed">
+          Consultá el listado completo de usuarios con rol <strong class="text-foreground">USUARIO</strong>, sus datos y estado.
+        </p>
+        <a th:href="@{/vistas/usuarios}" class="inline-flex items-center justify-center gap-2 w-full h-10 rounded-md bg-primary text-primary-foreground font-semibold text-sm hover:bg-primary/90 transition-all shadow-lg hover:shadow-primary/20">
+          <i data-lucide="list" class="w-4 h-4"></i>
+          Ver usuarios
+        </a>
+      </div>
+
+      <!-- Card: Estadísticas / Resumen -->
+      <div class="bg-secondary p-6 rounded-xl border border-border hover:border-primary/40 transition-all group">
+        <div class="flex items-center justify-between mb-4">
+          <div class="p-2.5 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-colors">
+            <i data-lucide="bar-chart-3" class="w-6 h-6 text-primary"></i>
+          </div>
+          <span class="text-xs font-semibold text-primary bg-primary/10 px-2 py-1 rounded-md">Resumen</span>
+        </div>
+        <h3 class="text-lg font-bold text-foreground mb-2">Estadísticas</h3>
+        <p class="text-muted-foreground text-sm mb-6 leading-relaxed">
+          Métricas rápidas de la plataforma: total de usuarios, CVs procesados y roles activos.
+        </p>
+        <a th:href="@{/vistas/estadisticas}" class="inline-flex items-center justify-center gap-2 w-full h-10 rounded-md border border-border text-muted-foreground font-semibold text-sm hover:bg-background hover:text-foreground transition-all">
+          <i data-lucide="activity" class="w-4 h-4"></i>
+          Ver estadísticas
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- DATOS DEL USUARIO + ACCIÓN PRINCIPAL    -->
+  <!-- (Visible para todos)                    -->
+  <!-- ═══════════════════════════════════════ -->
+  <section class="px-6 max-w-6xl mx-auto pb-12">
+    <div class="grid md:grid-cols-2 gap-6 animate-slide-up delay-400 opacity-0">
 
       <!-- Card: Datos Personales -->
       <div class="bg-secondary p-8 rounded-xl border border-border shadow-sm">
@@ -118,6 +196,10 @@
             <span class="text-muted-foreground text-sm">Teléfono</span>
             <span th:text="${usuario.telefono}" class="text-foreground font-medium text-sm">123456789</span>
           </div>
+          <div class="flex justify-between items-center py-2 border-b border-border/50">
+            <span class="text-muted-foreground text-sm">Rol</span>
+            <span th:text="${usuario.rol}" class="text-foreground font-medium text-sm px-2 py-0.5 rounded bg-secondary border border-border">USUARIO</span>
+          </div>
           <div class="flex justify-between items-center py-2">
             <span class="text-muted-foreground text-sm">Ubicación</span>
             <span th:text="${usuario.domicilio}" class="text-foreground font-medium text-sm text-right">Domicilio Falso 123</span>
@@ -125,7 +207,7 @@
         </div>
       </div>
 
-      <!-- Card: Acción Principal -->
+      <!-- Card: Acción Principal (Subir CV) -->
       <div class="bg-gradient-to-br from-primary/10 to-transparent p-8 rounded-xl border border-primary/20 shadow-sm flex flex-col justify-center items-center text-center">
         <div class="p-3 bg-primary/20 rounded-full mb-4">
           <i data-lucide="file-up" class="w-8 h-8 text-primary"></i>
@@ -147,7 +229,7 @@
 
   <!-- Features rápidas -->
   <section class="py-16 bg-[#222222]">
-    <div class="px-6 max-w-5xl mx-auto">
+    <div class="px-6 max-w-6xl mx-auto">
       <div class="text-center mb-12">
         <h2 class="text-2xl font-bold text-primary mb-2">¿Qué podés hacer?</h2>
         <p class="text-muted-foreground">Tu camino hacia el empleo ideal comienza acá.</p>
@@ -185,7 +267,7 @@
 
 <!-- Footer -->
 <footer class="py-8 px-6 border-t border-border bg-background">
-  <div class="max-w-5xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+  <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
     <div class="flex items-center gap-2">
       <i data-lucide="wand-2" class="w-5 h-5 text-primary"></i>
       <span class="font-bold text-lg text-primary">Te-ma</span>

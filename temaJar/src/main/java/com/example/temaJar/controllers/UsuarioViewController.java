@@ -9,8 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import jakarta.servlet.http.HttpSession; // ✨ Importación necesaria para manejar la sesión
+import org.springframework.web.bind.annotation.RequestParam;
+
 import java.util.ArrayList;
 
 @Controller
@@ -93,6 +96,19 @@ public class UsuarioViewController {
 
         // 🔥 Cambiamos "carga-cv" por "cargaCv" para que coincida con tu archivo
         return "carga-cv";
+    }
+
+    @PostMapping("/login")  // o la ruta que uses vos
+    public String login(@RequestParam String correo,
+                        @RequestParam String clave,
+                        HttpSession session) {
+
+        UsuarioDTO dto = usuarioServicio.login(correo, clave);
+
+        // ✅ Guardá el DTO en sesión (no la entidad Usuario)
+        session.setAttribute("usuarioLogueado", dto);
+
+        return "redirect:/vistas/index";
     }
 
     // 4. ✨ NUEVA RUTA: PANEL PRINCIPAL (INDEX)
